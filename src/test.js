@@ -1,3 +1,5 @@
+
+
 var renderer = PIXI.autoDetectRenderer(800, 600);
 document.body.appendChild(renderer.view);
 
@@ -5,7 +7,7 @@ document.body.appendChild(renderer.view);
 var stage = new PIXI.Container();
 
 // create a background...
-var background = PIXI.Sprite.fromImage('assets/images/background.png');
+var background = PIXI.Sprite.fromImage('../assets/images/background.png');
 background.width = renderer.width;
 background.height = renderer.height;
 
@@ -13,9 +15,9 @@ background.height = renderer.height;
 stage.addChild(background);
 
 // create some textures from an image path
-var textureButton = PIXI.Texture.fromImage('assets/images/button.png');
-var textureButtonDown = PIXI.Texture.fromImage('assets/images/button_hover.png');
-var textureButtonOver = PIXI.Texture.fromImage('assets/images/button_click.png');
+var textureButton = PIXI.Texture.fromImage('../assets/images/button.png');
+var textureButtonDown = PIXI.Texture.fromImage('../assets/images/button_hover.png');
+var textureButtonOver = PIXI.Texture.fromImage('../assets/images/button_click.png');
 
 var buttons = [];
 
