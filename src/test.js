@@ -89,9 +89,23 @@ buttons[4].scale.set(0.8,1.2);
 buttons[4].rotation = Math.PI;
 
 
+keyboard.onDown('space', function() {buttons[0].rotation += Math.PI / 10;});
+
 animate();
 
 function animate() {
+    if (keyboard.isDown('right')) {
+      buttons[0].position.x += 1;
+    }
+    if (keyboard.isDown('left')) {
+      buttons[0].position.x -= 1;
+    }
+    if (keyboard.isDown('up')) {
+      buttons[0].position.y -= 1;  
+    }
+    if (keyboard.isDown('down')) {
+      buttons[0].position.y += 1;  
+    }
     // render the stage
     renderer.render(stage);
 
