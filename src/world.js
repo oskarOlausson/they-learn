@@ -6,7 +6,7 @@ var CHANCE_OF_SKIPPING = 0.3;
 var World = Class({
   constructor: function constructor() {
   	this.enemies = [];
-  	this.player = new Player();
+  	this.player = new Player(background.width / 2, background.height / 2);
     firstGeneration();
   },
 
@@ -21,7 +21,7 @@ var World = Class({
     	return b.fitness - a.fitness;
     })
 
-    parents = [];
+    var parents = [];
     do{
 	    for (var i = 0; i < enemies.length; i++){
 	    	if (Math.random() > CHANCE_OF_SKIPPING) parents.push(enemies[i]);
@@ -43,6 +43,13 @@ var World = Class({
 	}
 
 	enemies = newGenerations;
+  },
+
+  update: function update() {
+  	player.update();
+  	for (var i = 0; i < enemies.length; i++){
+  		enemies[i].update();
+  	}
   },
 
   

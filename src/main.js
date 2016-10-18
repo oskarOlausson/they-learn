@@ -17,10 +17,13 @@ var loader = PIXI.loader
 
 
 function init() {
-	var background = new PIXI.Sprite(PIXI.loader.resources['enemy'].texture);
+	var background = new PIXI.Sprite(PIXI.loader.resources['background'].texture);
 	background.width = renderer.width;
 	background.height = renderer.height;
 	stage.addChild(background);
+
+	var world = new World();
+
 	gameLoop();
 }
 
