@@ -45,8 +45,6 @@ for (var i = 0; i < 5; i++)
 
     // make the button interactive...
     button.interactive = true;
-	
-	
 
     button
         // set the mousedown and touchstart callback...
@@ -79,11 +77,11 @@ for (var i = 0; i < 5; i++)
 }
 
 // set some silly values...
-buttons[0].scale.set(1.2);
+buttons[0].scale.set(1.8);
 
-buttons[2].rotation = Math.PI / 10;
+buttons[2].rotation = Math.PI * 1.5;
 
-buttons[3].scale.set(0.8);
+buttons[3].scale.set(2);
 
 buttons[4].scale.set(0.8,1.2);
 buttons[4].rotation = Math.PI;
@@ -94,17 +92,19 @@ keyboard.onDown('space', function() {buttons[0].rotation += Math.PI / 10;});
 animate();
 
 function animate() {
-    if (keyboard.isDown('right')) {
-      buttons[0].position.x += 1;
-    }
-    if (keyboard.isDown('left')) {
-      buttons[0].position.x -= 1;
-    }
-    if (keyboard.isDown('up')) {
-      buttons[0].position.y -= 1;  
-    }
-    if (keyboard.isDown('down')) {
-      buttons[0].position.y += 1;  
+    for (var i = 0; i < 5; i++){
+        if (keyboard.isDown('right')) {
+          buttons[i].position.x += 1;
+        }
+        if (keyboard.isDown('left')) {
+          buttons[i].position.x -= 1;
+        }
+        if (keyboard.isDown('up')) {
+          buttons[i].position.y -= 1;  
+        }
+        if (keyboard.isDown('down')) {
+          buttons[i].position.y += 1;  
+        }
     }
     // render the stage
     renderer.render(stage);
