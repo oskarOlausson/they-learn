@@ -56,6 +56,10 @@ var Perceptron = Class({
     }
   },
 
+  getWeight: function getWeight(index) {
+    return self.weights[index];
+  }
+
   getWeights: function getWeights() {
     return self.weights;
   },
