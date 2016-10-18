@@ -6,14 +6,17 @@ var CHANCE_OF_SKIPPING = 0.3;
 var World = Class({
   constructor: function constructor() {
   	this.enemies = [];
-  	//spawn a player in the middle
-  	this.player = new Player(background.width / 2, background.height / 2);
-    firstGeneration();
   },
 
-  firstGeneration: function firstGeneration() {
+  firstGeneration: function firstGeneration(width, height) {
+
+    this.player = new Player(width / 2 , height / 2);
+    var perceptron;
+
   	for(var i = 0; i < NR_OF_ENEMIES; i++){
-  		this.enemies.push(new Enemy(Math.random() * (background.width - 50) + 25, 0));
+      //some function for generating a genotype
+      var genotype = null;
+  		this.enemies.push(new Enemy(Math.random() * (width), 0, genotype));
   	}
   },
   

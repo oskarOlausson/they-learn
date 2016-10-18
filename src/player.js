@@ -1,7 +1,7 @@
 
 var Player = Class(Entity, {
   constructor: function constructor(x, y) {
-    Player.$super.call(this, 'enemy', x, y);
+    Player.$super.call(this, 'player', x, y);
   },
   
 
@@ -21,11 +21,11 @@ var Player = Class(Entity, {
     }
   },
 
-  addX function addX(dx){
+  addX: function addX(dx){
   	this.sprite.position += dx;
   },
 
-  addY function addY(dy){
+  addY: function addY(dy){
   	this.sprite.position += dy;
   },
 

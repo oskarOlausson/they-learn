@@ -2,7 +2,7 @@
 var Entity = Class({
   constructor: function constructor(image, x, y) {
     this.sprite = new PIXI.Sprite(PIXI.loader.resources[image].texture);
-    stage.add(sprite);
+    stage.addChild(this.sprite);
     this.radius = (this.sprite.width + this.sprite.height) / 2;
     this.setX(x);
     this.setY(y);

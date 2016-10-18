@@ -5,10 +5,8 @@ document.body.appendChild(renderer.view);
 var stage = new PIXI.Container();
 
 
-
-
 var loader = PIXI.loader
-.add('button','assets/images/player.png')
+.add('player','assets/images/player.png')
 .add('background','assets/images/background.png')
 .add('enemy','assets/images/enemy.png')
 .once('complete',function(loader, resources) {
@@ -23,6 +21,7 @@ function init() {
 	stage.addChild(background);
 
 	var world = new World();
+	world.firstGeneration(background.width, background.height);
 
 	gameLoop();
 }

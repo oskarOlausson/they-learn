@@ -7,6 +7,8 @@ var Perceptron = Class({
 
   constructor: function constructor(weights, weights2) {
 
+    this.output = 0;
+
     if (weights == undefined) {
       //Zero parents
 
@@ -54,12 +56,21 @@ var Perceptron = Class({
     }
   },
 
-  getPerceptron: function getPerceptron(){
+  getWeights: function getWeights() {
     return self.weights;
   },
+
+  copyWeights: function copyWeights() {
+    return self.weights.slice();
+  },
+
+  activation: function activation(x) {
+    this.output = 1 / (1 + Math.exp(-x));
+    return this.output;
+  },
+
+  getOutPut: function getOutPut(){
+    return this.output;
+  }
   
 })
-
-var activationFunction(x) {
-  return 1/(1 + Math.exp(-x));
-}
