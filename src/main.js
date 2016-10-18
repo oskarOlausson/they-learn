@@ -10,17 +10,17 @@ var stage = new PIXI.Container();
 var loader = PIXI.loader
 .add('button','assets/images/player.png')
 .add('background','assets/images/background.png')
-.add('background','assets/images/enemy.png')
-.add('background','assets/images/player.png')
-.add('background','assets/images/player.png')
+.add('enemy','assets/images/enemy.png')
 .once('complete',function(loader, resources) {
 	init();
 }).load();
 
 
 function init() {
-	//var button = new PIXI.Sprite(PIXI.loader.resources['button'].texture);
-	//stage.addChild(button);
+	var background = new PIXI.Sprite(PIXI.loader.resources['enemy'].texture);
+	background.width = renderer.width;
+	background.height = renderer.height;
+	stage.addChild(background);
 	gameLoop();
 }
 

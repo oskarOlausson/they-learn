@@ -4,5 +4,9 @@ var Enemy = Class(Entity, {
     Enemy.$super.call(this, 'enemy', x, y); 
     
     this.genotype = genotype;
+  },
+
+  getGenoType: function genGenotype(){
+  	return this.genotype;
   }
 });
