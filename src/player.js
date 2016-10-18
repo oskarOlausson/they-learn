@@ -3,6 +3,7 @@ var Player = Class(Entity, {
   constructor: function constructor(x, y) {
     Player.$super.call(this, 'enemy', x, y);
   },
+  
 
   move: function move(){
 
