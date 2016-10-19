@@ -3,9 +3,8 @@ NR_OF_PERCEPTRONS = 2;
 
 var Genotype = Class({
   constructor: function constructor(copyAfter) {
-
+    this.perceptrons = [];
     if (copyAfter == undefined){
-      this.perceptrons = [];
       for (var i = 0; i < NR_OF_PERCEPTRONS; i++) {
         this.perceptrons.push(new Perceptron());
       }

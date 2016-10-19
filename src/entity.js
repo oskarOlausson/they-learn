@@ -7,8 +7,10 @@ var Entity = Class({
     this.setX(x);
     this.setY(y);
   },
+
   
   collision: function collision(x, y, radius) {
+    if (radius == undefined) radius = 0;
     return ((x - this.getX()) ** 2 + (y - this.getY()) ** 2) ** .5 < radius + this.radius;
   },
   
@@ -27,4 +29,13 @@ var Entity = Class({
   setY: function setY(y) {
     this.sprite.position.y = y;
   },
+
+  addX: function addX(dx){
+    this.sprite.position.x += dx;
+  },
+
+  addY: function addY(dy){
+    this.sprite.position.y += dy;
+  },
+  
 });

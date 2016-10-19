@@ -14,13 +14,15 @@ var loader = PIXI.loader
 }).load();
 
 
+var world;
+
 function init() {
 	var background = new PIXI.Sprite(PIXI.loader.resources['background'].texture);
 	background.width = renderer.width;
 	background.height = renderer.height;
 	stage.addChild(background);
 
-	var world = new World();
+	world = new World();
 	world.firstGeneration(background.width, background.height);
 
 	gameLoop();
@@ -30,6 +32,8 @@ function gameLoop() {
    	
     // render the stage
     renderer.render(stage);
+
+    world.update();
 
     requestAnimationFrame(gameLoop);
 }

@@ -8,11 +8,10 @@ var Perceptron = Class({
   constructor: function constructor(weights, weights2) {
 
     this.output = 0;
+    this.weights = [];
 
     if (weights == undefined) {
       //Zero parents
-
-      this.weights = [];
       for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
         this.weights.push(Math.random() - 0.5);
       }
@@ -21,7 +20,7 @@ var Perceptron = Class({
       //One parent
 
       for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
-        if (Math.Random() < MUTATE_CHANCE){
+        if (Math.random() < MUTATE_CHANCE){
           var random_mutation = Math.random() * MUTATE_AMOUNT;
           var mutaded = Math.max(Math.min(weights[i] + random_mutation, 0.5) - 0.5);
           this.weights.push(mutated);
@@ -46,7 +45,7 @@ var Perceptron = Class({
 
         if (Math.Random() < MUTATE_CHANCE){
           var random_mutation = Math.random() * MUTATE_AMOUNT;
-          var mutaded = Math.max(Math.min(parent + random_mutation, 0.5) - 0.5);
+          var mutated = Math.max(Math.min(parent + random_mutation, 0.5) - 0.5);
           this.weights.push(mutated);
         }
         else{
@@ -57,15 +56,15 @@ var Perceptron = Class({
   },
 
   getWeight: function getWeight(index) {
-    return self.weights[index];
-  }
+    return this.weights[index];
+  },
 
   getWeights: function getWeights() {
-    return self.weights;
+    return this.weights;
   },
 
   copyWeights: function copyWeights() {
-    return self.weights.slice();
+    return this.weights.slice();
   },
 
   activation: function activation(x) {

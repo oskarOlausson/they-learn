@@ -15,7 +15,7 @@ var World = Class({
 
   	for(var i = 0; i < NR_OF_ENEMIES; i++){
       //some function for generating a genotype
-      var genotype = null;
+      var genotype = new Genotype();
   		this.enemies.push(new Enemy(Math.random() * (width), 0, genotype));
   	}
   },
@@ -33,26 +33,26 @@ var World = Class({
 	    		break;
 	    	}
 	    }
-	}while(parents.length < 10);
+	  }while(parents.length < 10);
 
-	newGenerations = [];
+  	newGenerations = [];
 
-	var parent;
+  	var parent;
 
-	for (var j = 0; j < NR_OF_ENEMIES; i++){
-		parent = Math.floor(Math.random() * parents.length);
-		parent = parents[parent];
+  	for (var j = 0; j < NR_OF_ENEMIES; i++){
+  		parent = Math.floor(Math.random() * parents.length);
+  		parent = parents[parent];
 
-		newGenerations.push(new Enemy(x, y, parent.getGenoType()));
-	}
+  		newGenerations.push(new Enemy(x, y, parent.getGenoType()));
+  	}
 
-	enemies = newGenerations;
+  	enemies = newGenerations;
   },
 
   update: function update() {
-  	player.update();
-  	for (var i = 0; i < enemies.length; i++){
-  		enemies[i].update();
+  	this.player.update();
+  	for (var i = 0; i < this.enemies.length; i++){
+  		this.enemies[i].update();
   	}
   },
 
