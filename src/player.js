@@ -6,7 +6,6 @@ var Player = Class(Entity, {
   
 
   update: function update() {
-  		
   		this.move();
   },
 

@@ -18,8 +18,8 @@ var Perceptron = Class({
 
     } else if (weights2 == undefined){
       //One parent
-
-      for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
+      //the plus one part is for the bias
+      for (var i = 0; i < NUMBER_OF_SENSORS + 1; i++) {
         if (Math.random() < MUTATE_CHANCE){
           var random_mutation = Math.random() * MUTATE_AMOUNT;
           var mutaded = Math.max(Math.min(weights[i] + random_mutation, 0.5) - 0.5);
@@ -29,7 +29,6 @@ var Perceptron = Class({
           this.weights.push(weights[i]);
         }
       }
-
     }
     else{
       //Two parents

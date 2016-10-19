@@ -7,6 +7,7 @@ var Genotype = Class({
     if (copyAfter == undefined){
       for (var i = 0; i < NR_OF_PERCEPTRONS; i++) {
         this.perceptrons.push(new Perceptron());
+        console.log("geno");
       }
     }else{
       for (var i = 0; i < NR_OF_PERCEPTRONS; i++) {

@@ -1,7 +1,7 @@
 var CHANCE_OF_SKIPPING = 0.3;
-    var NR_OF_PARENTS = 10;
-    var NR_OF_ENEMIES = 100;
-    var NR_OF_CHILDS = 10;
+    var NR_OF_PARENTS = 3;
+    var NR_OF_ENEMIES = 6;
+    var NR_OF_CHILDS = 2;
 
 var World = Class({
   constructor: function constructor() {
@@ -52,7 +52,7 @@ var World = Class({
   update: function update() {
   	this.player.update();
   	for (var i = 0; i < this.enemies.length; i++){
-  		this.enemies[i].update();
+      this.enemies[i].update(this.player);
   	}
   },
 
