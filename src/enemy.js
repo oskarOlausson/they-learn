@@ -1,10 +1,11 @@
-
-LEFT_RIGHT = 0;
-UP_DOWN = 1;
+"use strict";
+var LEFT_RIGHT = 0;
+var UP_DOWN = 1;
 
 
 var Enemy = Class(Entity, {
   constructor: function constructor(x, y, genotype) {
+
     Enemy.$super.call(this, 'enemy', x, y); 
     
     this.perceptrons = this.makePerceptrons(genotype);
@@ -26,7 +27,7 @@ var Enemy = Class(Entity, {
   	else{
   		//uses the genotype to make the perceptrons
 	  	for (var i = 0; i < NR_OF_PERCEPTRONS; i++) {
-	  		perceptrons.push( genotype.copyWeights(i) );
+	  		perceptrons.push( new Perceptron(genotype.copyWeights(i)) );
 	  	}
   	}
 
@@ -41,7 +42,7 @@ var Enemy = Class(Entity, {
   	this.sensors = this.sense(player);
   	this.plan();
   	this.act();
-  	if (this.collision(this.getX(), this.getY(), this.getRadius())){
+  	if (player.collision(this.getX(), this.getY(), this.getRadius())){
   		this.die();
   	}
   },
@@ -50,14 +51,17 @@ var Enemy = Class(Entity, {
   	return this.dead;
   },
 
-  die: function die() {
-  	this.dead = true;
-  	genotype = new Genotype();
+  remove: function remove() {
+  	var genotype = new Genotype();
   	genotype.fitness = this.getY();
   	genotype.setPerceptrons(this.perceptrons);
 
   	stage.removeChild(this.sprite);
   	return genotype;
+  },
+
+  die: function die() {
+  	this.dead = true;
   },
 
   sense: function sense(player) {
@@ -116,28 +120,31 @@ var Enemy = Class(Entity, {
   	var dx = 0;
   	var dy = 0;
   	if (this.perceptrons[LEFT_RIGHT].getOutPut() > 0.5){
-  		dx = 1;
-  		console.log("RIGHT");
+  		dx = 3;
   	} else if (this.perceptrons[LEFT_RIGHT].getOutPut() < 0.5){
-  		dx = -1;
-  		console.log("LEFT");
+  		dx = -3;
   	}
 
   	if (this.perceptrons[UP_DOWN].getOutPut() > 0.5){
-  		dy = 1;
-  		console.log("DOWN");
+  		dy = 3;
   	} else if (this.perceptrons[UP_DOWN].getOutPut() < 0.5){
-  		dy = -1;
-  		console.log("UP");
+  		dy = -3;
   	}
 
   	this.addX(dx);
   	if (this.getX() < 0){
   		this.setX(0);
   	}
-  	else if (this.getX() > 800){ //TODO, magic number
-  		this.setX(800);
+  	else if (this.getX() > 800 - this.getWidth()){ //TODO, magic number
+  		this.setX(800 - this.getWidth());
   	}
   	this.addY(dy);
+
+  	if (this.getY() < 0){
+  		this.setY(0);
+  	}
+  	else if (this.getY() > 600) {//TODO
+  		this.die();
+  	}
   },
 });

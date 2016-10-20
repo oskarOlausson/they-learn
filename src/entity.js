@@ -3,7 +3,7 @@ var Entity = Class({
   constructor: function constructor(image, x, y) {
     this.sprite = new PIXI.Sprite(PIXI.loader.resources[image].texture);
     stage.addChild(this.sprite);
-    this.radius = (this.sprite.width + this.sprite.height) / 2;
+    this.radius = (this.sprite.width + this.sprite.height) / 4;
     this.setX(x);
     this.setY(y);
   },
@@ -16,6 +16,14 @@ var Entity = Class({
 
   getRadius: function getRadius() {
     return this.radius;
+  },
+
+  getWidth: function getWidth() {
+    return this.sprite.width;
+  },
+
+  getHeight: function getHeight() {
+    return this.sprite.height;
   },
   
   getX: function getX() {
