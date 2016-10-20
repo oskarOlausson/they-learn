@@ -11,7 +11,11 @@ var Entity = Class({
   
   collision: function collision(x, y, radius) {
     radius = radius || 0;
-    return ((x - this.getX()) ** 2 + (y - this.getY()) ** 2) ** .5 < radius + this.radius;
+    return ((x - this.getX()) ** 2 + (y - this.getY()) ** 2) ** .5 < radius + this.getRadius();
+  },
+
+  getRadius: function getRadius() {
+    return this.radius;
   },
   
   getX: function getX() {
