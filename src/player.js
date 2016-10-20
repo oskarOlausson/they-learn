@@ -12,16 +12,16 @@ var Player = Class(Entity, {
   move: function move(){
 
     if (keyboard.isDown('right')) {
-      this.addX(1);
+      this.addX(5);
     }
     if (keyboard.isDown('left')) {
-     this.addX(-1);
+     this.addX(-5);
     }
     if (keyboard.isDown('up')) {
-      this.addY(-1);
+      this.addY(-5);
     }
     if (keyboard.isDown('down')) {
-      this.addY(1);
+      this.addY(5);
     }
   },
 

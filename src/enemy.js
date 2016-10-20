@@ -7,20 +7,27 @@ var Enemy = Class(Entity, {
   constructor: function constructor(x, y, genotype) {
     Enemy.$super.call(this, 'enemy', x, y); 
     
-    this.genotype = genotype;
-    this.perceptrons = this.makePerceptrons();
+    this.perceptrons = this.makePerceptrons(genotype);
     this.sensors = [];
+    this.dead = false;
     this.nrOfSensors = 32;
     //how far the robot can see with its sensors
     this.sensorRange = 256;
   },
 
-  makePerceptrons: function makePerceptrons() {
+  makePerceptrons: function makePerceptrons(genotype) {
   	var perceptrons = [];
-
-  	//uses the genotype to make the perceptrons
-  	for (var i = 0; i < NR_OF_PERCEPTRONS; i++) {
-  		perceptrons.push( new Perceptron(this.genotype.copyWeights(i)) );
+  	if (genotype == undefined){
+	  	//uses the genotype to make the perceptrons
+	  	for (var i = 0; i < NR_OF_PERCEPTRONS; i++) {
+	  		perceptrons.push( new Perceptron() );
+	  	}
+  	}
+  	else{
+  		//uses the genotype to make the perceptrons
+	  	for (var i = 0; i < NR_OF_PERCEPTRONS; i++) {
+	  		perceptrons.push( genotype.copyWeights(i) );
+	  	}
   	}
 
   	return perceptrons;
@@ -34,11 +41,23 @@ var Enemy = Class(Entity, {
   	this.sensors = this.sense(player);
   	this.plan();
   	this.act();
+  	if (this.collision(this.getX(), this.getY(), this.getRadius())){
+  		this.die();
+  	}
   },
 
-  collisionLine: function collisionLine(angle) {
-  	//uses this.x, this.y and angle
+  getIfDead: function getIfDead() {
+  	return this.dead;
+  },
 
+  die: function die() {
+  	this.dead = true;
+  	genotype = new Genotype();
+  	genotype.fitness = this.getY();
+  	genotype.setPerceptrons(this.perceptrons);
+
+  	stage.removeChild(this.sprite);
+  	return genotype;
   },
 
   sense: function sense(player) {
@@ -63,14 +82,13 @@ var Enemy = Class(Entity, {
   			}
   		}
 
-  		if (!collisionFound){
+  		if (collisionFound == false){
   			this.sensors.push(0);
   		}
-
-  		//bias
-  		this.sensors.push(1);
   	}
 
+  	//bias
+  	this.sensors.push(1);
   	return this.sensors;
   },
 
@@ -87,13 +105,14 @@ var Enemy = Class(Entity, {
   		}
 
   		//bias
-  		sum += this.perceptrons.getWeight(this.perceptrons.length-1) * 1;
+  		sum += this.perceptrons[p].getWeight(this.perceptrons.length - 1);
 
   		this.perceptrons[p].activation(sum);
   	}
   },
 
   act: function act() {
+  	//console.log(this.perceptrons[LEFT_RIGHT].getOutPut());
   	var dx = 0;
   	var dy = 0;
   	if (this.perceptrons[LEFT_RIGHT].getOutPut() > 0.5){
@@ -113,6 +132,12 @@ var Enemy = Class(Entity, {
   	}
 
   	this.addX(dx);
+  	if (this.getX() < 0){
+  		this.setX(0);
+  	}
+  	else if (this.getX() > 800){ //TODO, magic number
+  		this.setX(800);
+  	}
   	this.addY(dy);
   },
 });

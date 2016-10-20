@@ -10,19 +10,23 @@ var Perceptron = Class({
     this.output = 0;
     this.weights = [];
 
+    
     if (weights == undefined) {
       //Zero parents
-      for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
+      console.log("zero parents");
+      for (var i = 0; i < NUMBER_OF_SENSORS + 1; i++) {
         this.weights.push(Math.random() - 0.5);
       }
-
     } else if (weights2 == undefined){
+      a = b;
       //One parent
+      console.log("one parent");
       //the plus one part is for the bias
       for (var i = 0; i < NUMBER_OF_SENSORS + 1; i++) {
         if (Math.random() < MUTATE_CHANCE){
           var random_mutation = Math.random() * MUTATE_AMOUNT;
           var mutaded = Math.max(Math.min(weights[i] + random_mutation, 0.5) - 0.5);
+          console.log(mutated);
           this.weights.push(mutated);
         }
         else{
@@ -32,6 +36,7 @@ var Perceptron = Class({
     }
     else{
       //Two parents
+      console.log("two parents");
 
       for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
         var parent;
@@ -51,6 +56,11 @@ var Perceptron = Class({
           this.weights.push(parent);
         }
       }
+    }
+
+
+    for (var i = 0; i < this.weights.length; i++) {
+      if (this.weights[i] == undefined) console.log(i);
     }
   },
 

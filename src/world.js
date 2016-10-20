@@ -1,7 +1,7 @@
 var CHANCE_OF_SKIPPING = 0.3;
     var NR_OF_PARENTS = 3;
-    var NR_OF_ENEMIES = 6;
-    var NR_OF_CHILDS = 2;
+    var NR_OF_ENEMIES = 12;
+    var NR_OF_CHILDS = 4;
 
 var World = Class({
   constructor: function constructor() {
@@ -15,8 +15,8 @@ var World = Class({
 
   	for(var i = 0; i < NR_OF_ENEMIES; i++){
       //some function for generating a genotype
-      var genotype = new Genotype();
-  		this.enemies.push(new Enemy(Math.random() * (width), 0, genotype));
+      
+  	  this.enemies.push(new Enemy(Math.random() * (width), 0));
   	}
   },
   
@@ -53,6 +53,11 @@ var World = Class({
   	this.player.update();
   	for (var i = 0; i < this.enemies.length; i++){
       this.enemies[i].update(this.player);
+      if (this.enemies[i].getIfDead()) {
+        //remove this element from list
+        this.enemies.splice(i, 1);
+        i --;
+      }
   	}
   },
 
