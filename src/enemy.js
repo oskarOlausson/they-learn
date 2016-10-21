@@ -13,7 +13,8 @@ var Enemy = Class(Entity, {
     this.dead = false;
     this.nrOfSensors = 32;
     //how far the robot can see with its sensors
-    this.sensorRange = 256;
+    this.sensorRange = 800;
+    this.suicide = false;
   },
 
   makePerceptrons: function makePerceptrons(genotype) {
@@ -53,14 +54,20 @@ var Enemy = Class(Entity, {
 
   remove: function remove() {
   	var genotype = new Genotype();
-  	genotype.fitness = this.getY();
+  	if (this.suicide) {
+  		genotype.fitness = 0;
+  	}
+  	else {
+  		genotype.fitness = this.getY();
+  	}
   	genotype.setPerceptrons(this.perceptrons);
 
   	stage.removeChild(this.sprite);
   	return genotype;
   },
 
-  die: function die() {
+  die: function die(suicide) {
+  	this.suicide = suicide || false;
   	this.dead = true;
   },
 
@@ -72,6 +79,7 @@ var Enemy = Class(Entity, {
   	var angle;
   	var collisionFound;
   	this.sensors = [];
+  	var checkX;
 
   	for (var index = 0; index < this.nrOfSensors; index++){
   		angle = (Math.PI * 2) * (index / this.nrOfSensors);
@@ -79,8 +87,9 @@ var Enemy = Class(Entity, {
 
   		for (var dist = 0; dist < this.sensorRange; dist += 10) {
   			//we are not sending in our radius because we are checking a point
-  			if (player.collision(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist)){
-  				this.sensors.push(this.sensorRange - dist);
+  			checkX = this.getX() + Math.cos(angle) * dist;
+  			if (player.collision(checkX, this.getY() + Math.sin(angle) * dist) || checkX > 800 - this.getWidth() || checkX < 0){
+  				this.sensors.push((this.sensorRange - dist) / this.sensorRange);
   				collisionFound = true;
   				break;
   			}
@@ -119,24 +128,26 @@ var Enemy = Class(Entity, {
   	//console.log(this.perceptrons[LEFT_RIGHT].getOutPut());
   	var dx = 0;
   	var dy = 0;
-  	if (this.perceptrons[LEFT_RIGHT].getOutPut() > 0.5){
+  	if (this.perceptrons[LEFT_RIGHT].getOutPut() > 0.55){
   		dx = 3;
-  	} else if (this.perceptrons[LEFT_RIGHT].getOutPut() < 0.5){
+  	} else if (this.perceptrons[LEFT_RIGHT].getOutPut() < 0.45){
   		dx = -3;
   	}
 
-  	if (this.perceptrons[UP_DOWN].getOutPut() > 0.5){
+  	if (this.perceptrons[UP_DOWN].getOutPut() > 0.55){
   		dy = 3;
-  	} else if (this.perceptrons[UP_DOWN].getOutPut() < 0.5){
+  	} else if (this.perceptrons[UP_DOWN].getOutPut() < 0.45){
   		dy = -3;
   	}
 
   	this.addX(dx);
   	if (this.getX() < 0){
-  		this.setX(0);
+  		this.die(true);
+  		//this.setX(0);
   	}
   	else if (this.getX() > 800 - this.getWidth()){ //TODO, magic number
-  		this.setX(800 - this.getWidth());
+  		this.die(true);
+  		//this.setX(800 - this.getWidth());
   	}
   	this.addY(dy);
 
