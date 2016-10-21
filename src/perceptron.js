@@ -1,6 +1,6 @@
 
 var NUMBER_OF_SENSORS = 32;
-var MUTATE_CHANCE = 0.05;
+var MUTATE_CHANCE = 0.3;
 var MUTATE_AMOUNT = 0.1;
 
 var Perceptron = Class({

@@ -39,12 +39,21 @@ var Enemy = Class(Entity, {
   	return this.genotype;
   },
 
-  update: function update(player) {
-  	this.sensors = this.sense(player);
+  update: function update(player, towers) {
+  	this.sensors = this.sense(player, towers);
   	this.plan();
   	this.act();
   	if (player.collision(this.getX(), this.getY(), this.getRadius())){
   		this.die();
+  	}
+
+  	var tower;
+
+  	for (var index = 0; index < towers.length; index++) {
+  		tower = towers[index];
+  		if (tower.collision(this.getX(), this.getY(), this.getRadius())){
+  			this.die();
+  		}
   	}
   },
 
@@ -71,7 +80,7 @@ var Enemy = Class(Entity, {
   	this.dead = true;
   },
 
-  sense: function sense(player) {
+  sense: function sense(player, towers) {
   	//TODO, should get a list of bullets and list of towers too.
   	//senses the enviroment through the sensors
   	//maybe function where you put in your position and a angle and it returns
@@ -80,6 +89,7 @@ var Enemy = Class(Entity, {
   	var collisionFound;
   	this.sensors = [];
   	var checkX;
+  	var tower;
 
   	for (var index = 0; index < this.nrOfSensors; index++){
   		angle = (Math.PI * 2) * (index / this.nrOfSensors);
@@ -93,6 +103,17 @@ var Enemy = Class(Entity, {
   				collisionFound = true;
   				break;
   			}
+  			//TODO
+  			/*
+  			for (var t=0; t < towers.length; t++){
+  				tower = towers[t];
+  				if (tower.collision(checkX, this.getY() + Math.sin(angle) * dist) || checkX > 800 - this.getWidth() || checkX < 0){
+	  				this.sensors.push((this.sensorRange - dist) / this.sensorRange);
+	  				collisionFound = true;
+	  				break;
+  				}
+  			}
+  			*/
   		}
 
   		if (collisionFound == false){
@@ -128,9 +149,13 @@ var Enemy = Class(Entity, {
   	//console.log(this.perceptrons[LEFT_RIGHT].getOutPut());
   	var dx = 0;
   	var dy = 0;
-  	if (this.perceptrons[LEFT_RIGHT].getOutPut() > 0.55){
+
+  	var leftRight = this.perceptrons[LEFT_RIGHT].getOutPut();
+  	var upDown = this.perceptrons[LEFT_RIGHT].getOutPut();
+
+  	if (leftRight > 0.55){
   		dx = 3;
-  	} else if (this.perceptrons[LEFT_RIGHT].getOutPut() < 0.45){
+  	} else if (leftRight < 0.45){
   		dx = -3;
   	}
 

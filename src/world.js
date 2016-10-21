@@ -1,14 +1,15 @@
 "use strict";
 
 var CHANCE_OF_SKIPPING = 0.3;
-    var NR_OF_PARENTS = 3;
-    var NR_OF_ENEMIES = 12;
-    var NR_OF_CHILDS = 4;
+    var NR_OF_PARENTS = 10;
+    var NR_OF_ENEMIES = 60;
+    var NR_OF_CHILDS = 6;
 
 var World = Class({
   constructor: function constructor() {
   	this.enemies = [];
     this.genomes = [];
+    this.towers  = [];
   },
 
   firstGeneration: function firstGeneration(width, height) {
@@ -54,9 +55,22 @@ var World = Class({
 
   update: function update() {
   	this.player.update();
+    var towers = this.towers;
+    var player = this.player;
+
+    
+    keyboard.onDown('space', function() {
+      //TODO
+      if (towers.length < 2) towers.push(new Tower(player.getX(), player.getY()))
+    });
+    
+
+    for (var i = 0; i < this.towers.length; i++){
+      this.towers[i].update(this.enemies);
+    }
 
   	for (var i = 0; i < this.enemies.length; i++){
-      this.enemies[i].update(this.player);
+      this.enemies[i].update(this.player, this.towers);
       if (this.enemies[i].getIfDead()) {
         //remove this element from list
         this.genomes.push(this.enemies[i].remove());
@@ -67,7 +81,7 @@ var World = Class({
 
     if (this.enemies.length == 0) {
       this.newGeneration();
-      console.log("led zeppelin");
+      console.log("new generation");
     }
 
 
