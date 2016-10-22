@@ -1,15 +1,16 @@
 "use strict";
 
 var CHANCE_OF_SKIPPING = 0.3;
-    var NR_OF_PARENTS = 10;
-    var NR_OF_ENEMIES = 60;
-    var NR_OF_CHILDS = 6;
+    var NR_OF_PARENTS = 6;
+    var NR_OF_ENEMIES = 30;
+    var NR_OF_CHILDS = 5;
 
 var World = Class({
   constructor: function constructor() {
   	this.enemies = [];
     this.genomes = [];
     this.towers  = [];
+    this.pressed = false;
   },
 
   firstGeneration: function firstGeneration(width, height) {
@@ -55,14 +56,20 @@ var World = Class({
 
   update: function update() {
   	this.player.update();
-    var towers = this.towers;
     var player = this.player;
+    var e;
 
     
-    keyboard.onDown('space', function() {
-      //TODO
-      if (towers.length < 2) towers.push(new Tower(player.getX(), player.getY()))
-    });
+    //TODO, hack solution, onDown does not seem to work
+    if (keyboard.isDown('space')) {
+      if (this.pressed == false) {
+        this.towers.push(new Tower(player.getX(), player.getY()));
+        this.pressed = true;
+      }
+    }
+    else {
+      this.pressed = false;
+    }
     
 
     for (var i = 0; i < this.towers.length; i++){
@@ -70,9 +77,24 @@ var World = Class({
     }
 
   	for (var i = 0; i < this.enemies.length; i++){
-      this.enemies[i].update(this.player, this.towers);
+      e = this.enemies[i];
+      e.update(this.player, this.towers);
+
+
+      if (this.player.collision(e.getX(), e.getY(), e.getRadius())) {
+        e.die();
+      }
+
+      for (var t = 0; t < this.towers.length; t++) {
+        if (this.towers[t].collision(e.getX(), e.getY(), e.getRadius())) {
+          e.die();
+          console.log("yo");
+        }
+      }
+
+
       if (this.enemies[i].getIfDead()) {
-        //remove this element from list
+        //save genome and remove this element from list
         this.genomes.push(this.enemies[i].remove());
         this.enemies.splice(i, 1);
         i --;

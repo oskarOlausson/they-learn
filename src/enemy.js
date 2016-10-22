@@ -43,18 +43,6 @@ var Enemy = Class(Entity, {
   	this.sensors = this.sense(player, towers);
   	this.plan();
   	this.act();
-  	if (player.collision(this.getX(), this.getY(), this.getRadius())){
-  		this.die();
-  	}
-
-  	var tower;
-
-  	for (var index = 0; index < towers.length; index++) {
-  		tower = towers[index];
-  		if (tower.collision(this.getX(), this.getY(), this.getRadius())){
-  			this.die();
-  		}
-  	}
   },
 
   getIfDead: function getIfDead() {
@@ -89,34 +77,36 @@ var Enemy = Class(Entity, {
   	var collisionFound;
   	this.sensors = [];
   	var checkX;
+  	var checkY;
   	var tower;
 
-  	for (var index = 0; index < this.nrOfSensors; index++){
+  	for (var index = 0; index < this.nrOfSensors; index++) {
   		angle = (Math.PI * 2) * (index / this.nrOfSensors);
   		collisionFound = false;
 
   		for (var dist = 0; dist < this.sensorRange; dist += 10) {
   			//we are not sending in our radius because we are checking a point
   			checkX = this.getX() + Math.cos(angle) * dist;
-  			if (player.collision(checkX, this.getY() + Math.sin(angle) * dist) || checkX > 800 - this.getWidth() || checkX < 0){
+  			checkY = this.getY() + Math.sin(angle) * dist;
+
+  			if (player.collision(checkX, checkY) || checkX > 800 - this.getWidth() || checkX < 0) {
   				this.sensors.push((this.sensorRange - dist) / this.sensorRange);
   				collisionFound = true;
   				break;
   			}
-  			//TODO
-  			/*
-  			for (var t=0; t < towers.length; t++){
+  			
+  			for (var t = 0; t < towers.length; t++) {
   				tower = towers[t];
-  				if (tower.collision(checkX, this.getY() + Math.sin(angle) * dist) || checkX > 800 - this.getWidth() || checkX < 0){
+  				if (tower.collision(checkX, checkY)) {
 	  				this.sensors.push((this.sensorRange - dist) / this.sensorRange);
 	  				collisionFound = true;
 	  				break;
   				}
   			}
-  			*/
+  			
   		}
 
-  		if (collisionFound == false){
+  		if (collisionFound == false) {
   			this.sensors.push(0);
   		}
   	}
@@ -153,6 +143,14 @@ var Enemy = Class(Entity, {
   	var leftRight = this.perceptrons[LEFT_RIGHT].getOutPut();
   	var upDown = this.perceptrons[LEFT_RIGHT].getOutPut();
 
+  	/*
+  	variable speed
+  	dx = 6 * (leftRight - 0.5);
+  	dy = 6 * (upDown - 0.5);
+  	*/
+
+
+  	
   	if (leftRight > 0.55){
   		dx = 3;
   	} else if (leftRight < 0.45){
@@ -164,6 +162,7 @@ var Enemy = Class(Entity, {
   	} else if (this.perceptrons[UP_DOWN].getOutPut() < 0.45){
   		dy = -3;
   	}
+  	
 
   	this.addX(dx);
   	if (this.getX() < 0){
