@@ -9,6 +9,7 @@ var loader = PIXI.loader
 .add('player','assets/images/player.png')
 .add('background','assets/images/background.png')
 .add('enemy','assets/images/enemy.png')
+.add('wing','assets/images/wing.png')
 .once('complete',function(loader, resources) {
 	init();
 }).load();

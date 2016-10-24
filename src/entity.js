@@ -1,11 +1,17 @@
 
 var Entity = Class({
   constructor: function constructor(image, x, y) {
+    this.container = new PIXI.Container();
     this.sprite = new PIXI.Sprite(PIXI.loader.resources[image].texture);
-    stage.addChild(this.sprite);
+    this.container.addChild(this.sprite);
+    stage.addChild(this.container);
     this.radius = (this.sprite.width + this.sprite.height) / 4;
     this.setX(x);
     this.setY(y);
+  },
+
+  getContainer: function getContainer() {
+    return this.container;
   },
 
   
@@ -27,27 +33,27 @@ var Entity = Class({
   },
   
   getX: function getX() {
-    return this.sprite.position.x;
+    return this.container.x;
   },
 
   getY: function getY() {
-    return this.sprite.position.y;
+    return this.container.y;
   },
   
   setX: function setX(x) {
-    this.sprite.position.x = x;
+    this.container.x = x;
   },
 
   setY: function setY(y) {
-    this.sprite.position.y = y;
+    this.container.y = y;
   },
 
   addX: function addX(dx){
-    this.sprite.position.x += dx;
+    this.container.x += dx;
   },
 
   addY: function addY(dy){
-    this.sprite.position.y += dy;
+    this.container.y += dy;
   },
 
 });
