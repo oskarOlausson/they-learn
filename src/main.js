@@ -2,6 +2,10 @@
 var WORLD_WIDTH = 800;
 var WORLD_HEIGHT = 600;
 var renderer = PIXI.autoDetectRenderer(WORLD_WIDTH, WORLD_HEIGHT);
+
+//argument should maybe be renderer
+COLLISION = new Bump(PIXI);
+
 document.body.appendChild(renderer.view);
 
 // create the root of the scene graph

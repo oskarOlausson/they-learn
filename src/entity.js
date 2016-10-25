@@ -14,6 +14,9 @@ var Entity = Class({
     return this.container;
   },
 
+  getSprite: function getSprite() {
+    return this.sprite;
+  },
   
   collision: function collision(x, y, radius) {
     radius = radius || 0;

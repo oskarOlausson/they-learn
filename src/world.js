@@ -1,6 +1,6 @@
 "use strict";
 
-var CHANCE_OF_SKIPPING = 0.2;
+var CHANCE_OF_SKIPPING = 0;
     var NR_OF_PARENTS = 7;
     var NR_OF_ENEMIES = 35;
     var NR_OF_CHILDS = 5;
@@ -67,18 +67,16 @@ var World = Class({
       e = this.enemies[i];
       e.update(this.player, this.towers);
 
-
-      if (this.player.collision(e.getX(), e.getY(), e.getRadius())) {
+      //uses bump collision
+      if (COLLISION.hit(e.getContainer(), this.player.getContainer())) {
         e.die();
       }
 
       for (var t = 0; t < this.towers.length; t++) {
-        if (this.towers[t].collision(e.getX(), e.getY(), e.getRadius())) {
+        if (COLLISION.hit(this.towers[t].getSprite(), e.getSprite())) {
           e.die();
-          console.log("yo");
         }
       }
-
 
       if (this.enemies[i].getIfDead()) {
         //save genome and remove this element from list
