@@ -176,7 +176,7 @@ var Enemy = Class(Entity, {
   		this.die(true);
   		//this.setX(0);
   	}
-  	else if (this.getX() > 800 - this.getWidth()){ //TODO, magic number
+  	else if (this.getX() > WORLD_WIDTH - this.getWidth()){ //TODO, magic number
   		this.die(true);
   		//this.setX(800 - this.getWidth());
   	}
@@ -185,7 +185,7 @@ var Enemy = Class(Entity, {
   	if (this.getY() < 0){
   		this.setY(0);
   	}
-  	else if (this.getY() > 600) {//TODO
+  	else if (this.getY() > WORLD_HEIGHT) {//TODO
   		this.die();
   	}
   },

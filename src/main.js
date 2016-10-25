@@ -1,4 +1,7 @@
-var renderer = PIXI.autoDetectRenderer(800, 600);
+
+var WORLD_WIDTH = 800;
+var WORLD_HEIGHT = 600;
+var renderer = PIXI.autoDetectRenderer(WORLD_WIDTH, WORLD_HEIGHT);
 document.body.appendChild(renderer.view);
 
 // create the root of the scene graph
@@ -24,17 +27,25 @@ function init() {
 	stage.addChild(background);
 
 	world = new World();
-	world.firstGeneration(background.width, background.height);
+	world.firstGeneration();
+
+	keyboard.onDown('space', function(){
+		world.towers.push(new Tower(world.player.getX(), world.player.getY()));
+		console.log("hi");
+	});
 
 	gameLoop();
 }
 
+	
+
+
 function gameLoop() {
-   	
-    // render the stage
-    renderer.render(stage);
+	
+	// render the stage
+	renderer.render(stage);
 
-    world.update();
+	world.update();
 
-    requestAnimationFrame(gameLoop);
+	requestAnimationFrame(gameLoop);
 }

@@ -13,15 +13,15 @@ var World = Class({
     this.pressed = false;
   },
 
-  firstGeneration: function firstGeneration(width, height) {
+  firstGeneration: function firstGeneration() {
 
-    this.player = new Player(width / 2 , height / 2);
+    this.player = new Player(WORLD_WIDTH / 2 , WORLD_HEIGHT / 2);
     var perceptron;
 
   	for(var i = 0; i < NR_OF_ENEMIES; i++){
       //some function for generating a genotype
       
-  	  this.enemies.push(new Enemy(Math.random() * (width), 0));
+  	  this.enemies.push(new Enemy(Math.random() * (WORLD_WIDTH), 0));
   	}
   },
   
@@ -50,7 +50,7 @@ var World = Class({
   	for (var i = 0; i < NR_OF_ENEMIES; i++){
   		index = Math.floor(Math.random() * parents.length);
   		parent = parents[index];
-      this.enemies.push(new Enemy(Math.random() * (800), 0, parent));
+      this.enemies.push(new Enemy(Math.random() * (WORLD_WIDTH), 0, parent));
   	}
   },
 
@@ -58,19 +58,6 @@ var World = Class({
   	this.player.update();
     var player = this.player;
     var e;
-
-    
-    //TODO, hack solution, onDown does not seem to work
-    if (keyboard.isDown('space')) {
-      if (this.pressed == false) {
-        this.towers.push(new Tower(player.getX(), player.getY()));
-        this.pressed = true;
-      }
-    }
-    else {
-      this.pressed = false;
-    }
-    
 
     for (var i = 0; i < this.towers.length; i++){
       this.towers[i].update(this.enemies);
