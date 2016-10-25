@@ -4,7 +4,7 @@ var Entity = Class({
     this.container = new PIXI.Container();
     this.sprite = new PIXI.Sprite(PIXI.loader.resources[image].texture);
     this.container.addChild(this.sprite);
-    stage.addChild(this.container);
+    STAGE.addChild(this.container);
     this.radius = (this.sprite.width + this.sprite.height) / 4;
     this.setX(x);
     this.setY(y);

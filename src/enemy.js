@@ -6,7 +6,7 @@ var UP_DOWN = 1;
 var Enemy = Class(Entity, {
   constructor: function constructor(x, y, genotype) {
 
-    Enemy.$super.call(this, 'enemy', x, y);
+    Enemy.$super.call(this, 'enemy', x, y); 
     
     this.perceptrons = this.makePerceptrons(genotype);
     this.sensors = [];
@@ -15,13 +15,6 @@ var Enemy = Class(Entity, {
     //how far the robot can see with its sensors
     this.sensorRange = 800;
     this.suicide = false;
-
-    this.rightWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
-    this.leftWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
-    this.rightWing.x += this.sprite.width;
-    this.leftWing.scale.x = -1;
-    this.getContainer().addChild(this.rightWing);
-    this.getContainer().addChild(this.leftWing);
   },
 
   makePerceptrons: function makePerceptrons(genotype) {
@@ -66,7 +59,7 @@ var Enemy = Class(Entity, {
   	}
   	genotype.setPerceptrons(this.perceptrons);
 
-  	stage.removeChild(this.getContainer());
+  	STAGE.removeChild(this.container);
   	return genotype;
   },
 
@@ -87,7 +80,7 @@ var Enemy = Class(Entity, {
   	var checkY;
   	var tower;
 
-  	for (var index = 0; index < this.nrOfSensors; index++) {
+  	for (var index = 0; index < NUMBER_OF_SENSORS; index++) {
   		angle = (Math.PI * 2) * (index / this.nrOfSensors);
   		collisionFound = false;
 

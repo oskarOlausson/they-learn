@@ -5,7 +5,7 @@ var renderer = PIXI.autoDetectRenderer(WORLD_WIDTH, WORLD_HEIGHT);
 document.body.appendChild(renderer.view);
 
 // create the root of the scene graph
-var stage = new PIXI.Container();
+var STAGE = new PIXI.Container();
 
 
 var loader = PIXI.loader
@@ -24,7 +24,7 @@ function init() {
 	var background = new PIXI.Sprite(PIXI.loader.resources['background'].texture);
 	background.width = renderer.width;
 	background.height = renderer.height;
-	stage.addChild(background);
+	STAGE.addChild(background);
 
 	world = new World();
 	world.firstGeneration();
@@ -43,7 +43,7 @@ function init() {
 function gameLoop() {
 	
 	// render the stage
-	renderer.render(stage);
+	renderer.render(STAGE);
 
 	world.update();
 

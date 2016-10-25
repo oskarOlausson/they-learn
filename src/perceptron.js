@@ -1,7 +1,7 @@
 
 var NUMBER_OF_SENSORS = 32;
-var MUTATE_CHANCE = 0.3;
-var MUTATE_AMOUNT = 0.1;
+var MUTATE_CHANCE = 0.5;
+var MUTATE_AMOUNT = 0.3;
 
 var Perceptron = Class({
 
@@ -13,17 +13,20 @@ var Perceptron = Class({
     
     if (weights == undefined) {
       //Zero parents
-      for (var i = 0; i < NUMBER_OF_SENSORS + 1; i++) {
+      for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
         this.weights.push(Math.random() - 0.5);
       }
+
+      //bias
+      this.weights.push(Math.random() - 0.5);
+
     } else if (weights2 == undefined){
       //One parent
-      //the plus one part is for the bias
       var random_mutation;
       var mutated;
-      for (var i = 0; i < NUMBER_OF_SENSORS + 1; i++) {
+      for (var i = 0; i < weights.length; i++) {
         if (Math.random() < MUTATE_CHANCE){
-          random_mutation = Math.random() * MUTATE_AMOUNT;
+          random_mutation = Math.random() * MUTATE_AMOUNT - MUTATE_AMOUNT / 2;
 
           mutated = random_mutation + weights[i];
           if (mutated > 0.5) mutated = 0.5;
@@ -38,7 +41,7 @@ var Perceptron = Class({
     }
     else{
       //Two parents
-      for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
+      for (var i = 0; i < weights.length; i++) {
         var parent;
         if (Math.Random() <= 0.5){
           parent = weights[i];
@@ -48,7 +51,7 @@ var Perceptron = Class({
         }
 
         if (Math.Random() < MUTATE_CHANCE){
-          var random_mutation = Math.random() * MUTATE_AMOUNT;
+          var random_mutation = Math.random() * MUTATE_AMOUNT - MUTATE_AMOUNT / 2;
           var mutated = Math.max(Math.min(parent + random_mutation, 0.5) - 0.5);
           this.weights.push(mutated);
         }

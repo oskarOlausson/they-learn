@@ -1,8 +1,8 @@
 "use strict";
 
-var CHANCE_OF_SKIPPING = 0.3;
-    var NR_OF_PARENTS = 6;
-    var NR_OF_ENEMIES = 30;
+var CHANCE_OF_SKIPPING = 0.2;
+    var NR_OF_PARENTS = 7;
+    var NR_OF_ENEMIES = 35;
     var NR_OF_CHILDS = 5;
 
 var World = Class({
