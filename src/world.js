@@ -68,7 +68,8 @@ var World = Class({
       e.update(this.player, this.towers);
 
       //uses bump collision
-      if (COLLISION.hit(e.getContainer(), this.player.getContainer())) {
+      //the boolean arguments are intersection, bounce, use global coordinates
+      if (COLLISION.hit(e.getSprite(), this.player.getSprite(), false, false, true)) {
         e.die();
       }
 
