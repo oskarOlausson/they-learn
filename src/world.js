@@ -1,9 +1,9 @@
 "use strict";
 
 var CHANCE_OF_SKIPPING = 0;
-    var NR_OF_PARENTS = 7;
-    var NR_OF_ENEMIES = 35;
-    var NR_OF_CHILDS = 5;
+    var NR_OF_PARENTS = 6;
+    var NR_OF_ENEMIES = 24;
+    var NR_OF_CHILDS = 4;
 
 var World = Class({
   constructor: function constructor() {
@@ -74,7 +74,7 @@ var World = Class({
       }
 
       for (var t = 0; t < this.towers.length; t++) {
-        if (COLLISION.hit(this.towers[t].getSprite(), e.getSprite())) {
+        if (COLLISION.hit(this.towers[t].getSprite(), e.getSprite(), false, false, true)) {
           e.die();
         }
       }

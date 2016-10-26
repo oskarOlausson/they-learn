@@ -38,6 +38,11 @@ function init() {
 		console.log("hi");
 	});
 
+	keyboard.onDown('r', function(){
+		world.towers.push(new Tower(world.player.getX(), world.player.getY()));
+		console.log("hi");
+	});
+
 	gameLoop();
 }
 

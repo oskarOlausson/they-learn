@@ -18,9 +18,21 @@ var Entity = Class({
     return this.sprite;
   },
   
-  collision: function collision(x, y, radius) {
-    radius = radius || 0;
-    return ((x - this.getX()) ** 2 + (y - this.getY()) ** 2) ** .5 < radius + this.getRadius();
+  collisionLine: function collisionLine(x0, y0, m) {
+    var xmin = this.getX();
+    var xmax = xmin + this.getWidth();
+    var ymin = this.getY();
+    var ymax = ymin + this.getHeight();
+    var y;
+
+    for (var x = xmin; x <= xmax; x++) {
+      y = m * (x - x0) + y0;
+      if (y > ymin && y < ymax) {
+        return ((y - y0) + (x - x0)) ** 0.5;
+      }
+    }
+
+    return undefined;
   },
 
   getRadius: function getRadius() {

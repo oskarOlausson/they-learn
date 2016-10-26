@@ -6,7 +6,19 @@ var UP_DOWN = 1;
 var Enemy = Class(Entity, {
   constructor: function constructor(x, y, genotype) {
 
-    Enemy.$super.call(this, 'enemy', x, y); 
+    Enemy.$super.call(this, 'enemy', x, y);
+
+    var leftWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
+    var rightWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
+
+    leftWing.scale.x = -1;
+    rightWing.x += this.getWidth();
+
+    this.container.addChild(leftWing);
+    this.container.addChild(rightWing);
+
+
+    STAGE.addChild(this.container);
     
     this.perceptrons = this.makePerceptrons(genotype);
     this.sensors = [];
@@ -79,32 +91,30 @@ var Enemy = Class(Entity, {
   	var checkX;
   	var checkY;
   	var tower;
+  	var myX, myY;
+  	var m;
+  	var dist;
 
   	for (var index = 0; index < NUMBER_OF_SENSORS; index++) {
-  		angle = (Math.PI * 2) * (index / this.nrOfSensors);
-  		collisionFound = false;
 
-  		for (var dist = 0; dist < this.sensorRange; dist += 10) {
-  			//we are not sending in our radius because we are checking a point
-  			checkX = this.getX() + Math.cos(angle) * dist;
-  			checkY = this.getY() + Math.sin(angle) * dist;
+			angle = (Math.PI * 2) * (index / NUMBER_OF_SENSORS);
 
-  			if (player.collision(checkX, checkY) || checkX > 800 - this.getWidth() || checkX < 0) {
-  				this.sensors.push((this.sensorRange - dist) / this.sensorRange);
-  				collisionFound = true;
-  				break;
-  			}
-  			
-  			for (var t = 0; t < towers.length; t++) {
-  				tower = towers[t];
-  				if (tower.collision(checkX, checkY)) {
-	  				this.sensors.push((this.sensorRange - dist) / this.sensorRange);
-	  				collisionFound = true;
-	  				break;
-  				}
-  			}
-  			
-  		}
+  		myX = this.getX();
+			myY = this.getY();
+			m = Math.tan ( Math.atan2(myY / myX) - angle);
+
+			dist = player.collisionLine(myX, myY, m);
+			if (dist != undefined) {
+				this.sensors.push(dist);
+			}
+
+			for (var t = 0; t < towers.length; t++) {
+				dist = towers[t].collisionLine(myX, myY, m);
+
+				if (dist != undefined) {
+					this.sensors.push(dist);
+				}
+			}
 
   		if (collisionFound == false) {
   			this.sensors.push(0);
