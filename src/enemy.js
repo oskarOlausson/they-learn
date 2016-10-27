@@ -17,16 +17,54 @@ var Enemy = Class(Entity, {
     this.container.addChild(leftWing);
     this.container.addChild(rightWing);
 
-
     STAGE.addChild(this.container);
     
     this.perceptrons = this.makePerceptrons(genotype);
     this.sensors = [];
+    this.createVisionLine();
     this.dead = false;
     this.nrOfSensors = 32;
     //how far the robot can see with its sensors
     this.sensorRange = 800;
     this.suicide = false;
+  },
+
+  createVisionLine: function createVisionLine() {
+  	//this is for debugging, creates the the graphics object that shows how far an enemy can see
+
+  	var visionGraphic = new PIXI.Graphics();
+  	visionGraphic.lineStyle(1, 0xf3a33f);
+  	this.pointList = [];
+  	var point = [];
+  	var angle;
+
+  	for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
+  		this.pointList.push(new PIXI.Point(this.getX(), this.getY()));
+
+  		if (i == 0) {
+ 					visionGraphic.moveTo(this.pointList[i].x, this.pointList[i].y);
+ 			}
+ 			else {
+ 					visionGraphic.lineTo(this.pointList[i].x, this.pointList[i].y);
+ 			}
+  	}
+
+  	STAGE.addChild(visionGraphic);
+
+  },
+
+  updateVisionLine: function updateVisionLine() {
+  	var angle;
+  	var x, y;
+  	var dist;
+
+  	for (var i = 0; i < this.sensors.length; i++) {
+  		angle = 2 * Math.pi * (i / this.sensors.length);
+  		dist = this.sensors[i];
+
+  		this.pointList[i].x = this.getX() + Math.cos(angle) * dist;
+  		this.pointList[i].y = this.getY() + Math.sin(angle) * dist;
+  	}
   },
 
   makePerceptrons: function makePerceptrons(genotype) {
@@ -47,12 +85,13 @@ var Enemy = Class(Entity, {
   	return perceptrons;
   },
 
-  getGenoType: function genGenotype() {
+  getGenoType: function getGenotype() {
   	return this.genotype;
   },
 
   update: function update(player, towers) {
   	this.sensors = this.sense(player, towers);
+  	this.updateVisionLine();
   	this.plan();
   	this.act();
   },
@@ -101,7 +140,7 @@ var Enemy = Class(Entity, {
 
   		myX = this.getX();
 			myY = this.getY();
-			m = Math.tan ( Math.atan2(myY / myX) - angle);
+			m = Math.tan ( Math.atan2(myY , myX) - angle);
 
 			dist = player.collisionLine(myX, myY, m);
 			if (dist != undefined) {
