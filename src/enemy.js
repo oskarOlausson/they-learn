@@ -8,11 +8,19 @@ var Enemy = Class(Entity, {
 
     Enemy.$super.call(this, 'enemy', x, y);
 
+    this.sprite.anchor.x = 0.5;
+    this.sprite.anchor.y = 0.5;
+
     var leftWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
     var rightWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
 
     leftWing.scale.x = -1;
-    rightWing.x += this.getWidth();
+    leftWing.x -= this.getWidth() / 2;
+    rightWing.x += this.getWidth() / 2;
+    leftWing.y -= this.getHeight() / 2;
+    rightWing.y -= this.getHeight() / 2;
+
+    this.addY(this.getHeight() / 2);
 
     this.container.addChild(leftWing);
     this.container.addChild(rightWing);
@@ -25,7 +33,7 @@ var Enemy = Class(Entity, {
     this.dead = false;
     this.nrOfSensors = 32;
     //how far the robot can see with its sensors
-    this.sensorRange = 128;
+    this.sensorRange = 400;
     this.suicide = false;
   },
 
@@ -39,7 +47,7 @@ var Enemy = Class(Entity, {
   	var angle;
 
   	for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
-  		this.pointList.push(new PIXI.Point(this.getX() + 90 + i, this.getY() + 90 + i));
+  		this.pointList.push(new PIXI.Point(this.getX() + i, this.getY() + i));
 
   		if (i == 0) {
  					this.visionGraphic.moveTo(this.pointList[i].x, this.pointList[i].y);
@@ -51,6 +59,19 @@ var Enemy = Class(Entity, {
 
   	STAGE.addChild(this.visionGraphic);
 
+  },
+
+  animateVisionLine: function animateVisionLine() {
+
+  	this.visionGraphic.clear();
+  	this.visionGraphic.lineStyle(2, 0xFF99FF);
+
+  	this.visionGraphic.moveTo(this.pointList[0].x, this.pointList[0].y);
+  	for (var i = 1; i < this.pointList.length; i++) {
+ 			this.visionGraphic.lineTo(this.pointList[i].x, this.pointList[i].y);
+  	}
+
+  	this.visionGraphic.lineTo(this.pointList[0].x, this.pointList[0].y);
   },
 
   makePerceptrons: function makePerceptrons(genotype) {
@@ -96,6 +117,7 @@ var Enemy = Class(Entity, {
   	genotype.setPerceptrons(this.perceptrons);
 
   	STAGE.removeChild(this.container);
+  	STAGE.removeChild(this.visionGraphic);
   	return genotype;
   },
 
@@ -116,7 +138,8 @@ var Enemy = Class(Entity, {
   	var checkY;
   	var tower;
   	var myX, myY;
-  	var dist
+  	var dist;
+  	var halfWidth, halfHeight;
 
   	for (var index = 0; index < NUMBER_OF_SENSORS; index++) {
   		//assume false
@@ -127,12 +150,14 @@ var Enemy = Class(Entity, {
   		myX = this.getX();
 			myY = this.getY();
 			
-			for (var dist = 10; dist <= this.sensorRange; dist += 10) {
+			for (var dist = 10; dist <= this.sensorRange && collisionFound == false; dist += 10) {
 
 				checkX = myX + Math.cos(angle) * dist;
 				checkY = myY + Math.sin(angle) * dist;
+				halfWidth = this.getWidth() / 2;
+				halfHeight = this.getHeight() / 2;
 
-				if (checkX > WORLD_WIDTH - this.getWidth() || checkX < 0 || checkY < 0 || checkY > WORLD_HEIGHT - this.getHeight()) {
+				if (checkX > WORLD_WIDTH - halfWidth || checkX < halfWidth || checkY < halfHeight || checkY > WORLD_HEIGHT - halfHeight) {
 						collisionFound = true;
 				}
 
@@ -151,25 +176,26 @@ var Enemy = Class(Entity, {
 						}
 					}
 				}
-				
+
+				if (collisionFound) {
+  				this.sensors.push(this.sensorRange - dist);
+  				this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
+  			}
+
 			}
 
-  		if (collisionFound) {
-  			this.sensors.push(this.sensorRange - dist);
-  			this.pointList[index].x = this.getX() + Math.cos(angle) * dist;
-  			console.log(this.pointList[index]);
-  			this.pointList[index].y = this.getY() + Math.sin(angle) * dist;
-
-  		}
-  		else {
+			if (collisionFound == false) {
   			this.sensors.push(0);
-  			this.pointList[index].x = this.getX() + Math.cos(angle) * this.sensorRange;
-  			this.pointList[index].y = this.getY() + Math.sin(angle) * this.sensorRange;
+  			this.pointList[index].set(this.getX() + Math.cos(angle) * this.sensorRange, this.getY() + Math.sin(angle) * this.sensorRange);
   		}
+
+  		
   	}
 
+  	this.animateVisionLine();
+
   	//bias
-  	this.sensors.push();
+  	this.sensors.push(1);
   	return this.sensors;
   },
 
@@ -222,20 +248,20 @@ var Enemy = Class(Entity, {
   	
 
   	this.addX(dx);
-  	if (this.getX() < 0){
+  	if (this.getX() < this.getWidth() / 2){
   		this.die(true);
   		//this.setX(0);
   	}
-  	else if (this.getX() > WORLD_WIDTH - this.getWidth()){ //TODO, magic number
+  	else if (this.getX() > WORLD_WIDTH - this.getWidth() / 2){
   		this.die(true);
   		//this.setX(800 - this.getWidth());
   	}
   	this.addY(dy);
 
-  	if (this.getY() < 0){
-  		this.setY(0);
+  	if (this.getY() < this.getHeight() / 2){
+  		this.setY(this.getHeight() / 2);
   	}
-  	else if (this.getY() > WORLD_HEIGHT) {//TODO
+  	else if (this.getY() > WORLD_HEIGHT) {
   		this.die();
   	}
   },
