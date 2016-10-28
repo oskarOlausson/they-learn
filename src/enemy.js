@@ -144,7 +144,7 @@ var Enemy = Class(Entity, {
 
   	for (var index = 0; index < NUMBER_OF_SENSORS; index++) {
   		//assume false
-  		collisionFound = false;
+  		collisionFound = [false, false];
 
 			angle = (Math.PI * 2) * (index / NUMBER_OF_SENSORS);
 
@@ -159,12 +159,12 @@ var Enemy = Class(Entity, {
 				halfHeight = this.getHeight() / 2;
 
 				if (checkX > WORLD_WIDTH - halfWidth || checkX < halfWidth || checkY < halfHeight || checkY > WORLD_HEIGHT - halfHeight) {
-						collisionFound = true;
+						collisionFound[WallIndex] = true;
 				}
 
 				if (checkX >= player.getX() && checkX <= player.getX() + player.getWidth()) {
 					if (checkY >= player.getY() && checkY <= player.getY() + player.getHeight()) {
-						collisionFound = true;
+						collisionFound[PlayerIndex] = true;
 					}
 				}
 
@@ -172,30 +172,39 @@ var Enemy = Class(Entity, {
 					tower = towers[t];
 					if (checkX >= tower.getX() && checkX <= tower.getX() + tower.getWidth()) {
 						if (checkY >= tower.getY() && checkY <= tower.getY() + tower.getHeight()) {
-							collisionFound = true;
+							collisionFound[PlayerIndex] = true;
 						}
 					}
 				}
 
-				if (collisionFound) {
-  				this.sensors.push(this.sensorRange - dist);
+				if (collisionFound[WallIndex]) {
+  				this.sensors[WallIndex].push(this.sensorRange - dist);
+  				if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
+  			}
+
+  			if (collisionFound[PlayerIndex]) {
+  				this.sensors[PlayerIndex].push(this.sensorRange - dist);
   				if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
   			}
 
 			}
 
-			if (collisionFound == false) {
-  			this.sensors.push(0);
+			if (collisionFound[WallIndex] == false) {
+  			this.sensors[WallIndex].push(0);
   			if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * this.sensorRange, this.getY() + Math.sin(angle) * this.sensorRange);
   		}
 
-  		
+  		if (collisionFound[PlayerIndex] == false) {
+  			this.sensors[PlayerIndex].push(0);
+  			if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * this.sensorRange, this.getY() + Math.sin(angle) * this.sensorRange);
+  		}
   	}
 
   	if (DEBUG) this.animateVisionLine();
 
   	//bias
-  	this.sensors.push(1);
+  	this.sensors[WallIndex].push(1);
+  	this.sensors[PlayerIndex].push(1);
   	return this.sensors;
   },
 
@@ -208,7 +217,7 @@ var Enemy = Class(Entity, {
   		sum = 0;
   		for (var s = 0; s < this.sensors.length; s++) {
   			weight = this.perceptrons[p].getWeight(s);
-  			sum += weight * this.sensors[s];
+  			sum += weight * this.sensors[WallIndex][s];
   		}
 
   		//bias

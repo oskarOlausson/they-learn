@@ -1,62 +1,76 @@
 
 var NUMBER_OF_SENSORS = 16;
+var NUMBER_OF_TYPES = 2;
 var MUTATE_CHANCE = 0.5;
 var MUTATE_AMOUNT = 0.3;
+var WallIndex = 0;
+var PlayerIndex = 1;
 
 var Perceptron = Class({
 
   constructor: function constructor(weights, weights2) {
 
-    this.output = 0;
+    this.outputs = [0, 0];
     this.weights = [];
 
+    
+    this.weights[WallIndex] = []; //for walls
+    this.weights[PlayerIndex] = []; //for the player
+    
     
     if (weights == undefined) {
       //Zero parents
       for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
-        this.weights.push(Math.random() - 0.5);
+        this.weights[WallIndex].push(Math.random() - 0.5);
+        this.weights[PlayerIndex].push(Math.random() - 0.5)
       }
 
       //bias
-      this.weights.push(Math.random() - 0.5);
+      this.weights[WallIndex].push(Math.random() - 0.5);
+      this.weights[PlayerIndex].push(Math.random() - 0.5);
 
-    } else if (weights2 == undefined){
+    }
+    else if (weights2 == undefined){
       //One parent
       var random_mutation;
       var mutated;
-      for (var i = 0; i < weights.length; i++) {
-        if (Math.random() < MUTATE_CHANCE){
-          random_mutation = Math.random() * MUTATE_AMOUNT - MUTATE_AMOUNT / 2;
+      for (var i = 0; i < weights[WallIndex].length; i++) {
+        for (var type = 0; type < 2; type++) {
+          if (Math.random() < MUTATE_CHANCE){
+            random_mutation = Math.random() * MUTATE_AMOUNT - MUTATE_AMOUNT / 2;
 
-          mutated = random_mutation + weights[i];
-          if (mutated > 0.5) mutated = 0.5;
-          else if (mutated < -0.5) mutated = -0.5;
+            mutated = random_mutation + weights[type][i];
+            if (mutated > 0.5) mutated = 0.5;
+            else if (mutated < -0.5) mutated = -0.5;
 
-          this.weights.push(mutated);
-        }
-        else{
-          this.weights.push(weights[i]);
+            this.weights[type].push(mutated);
+          }
+          else{
+            this.weights[type].push(weights[type][i]);
+          }
         }
       }
     }
     else{
       //Two parents
-      for (var i = 0; i < weights.length; i++) {
-        var parent;
-        if (Math.Random() <= 0.5){
-          parent = weights[i];
-        }
-        else{
-          parent = weights2[i];
-        }
+      var parent;
+      for (var i = 0; i < weights[WallIndex].length; i++) {
+        for (var type = 0; type < 2; type++) {      
+          if (Math.Random() <= 0.5){
+            parent = weights[type][i];
+          }
+          else{
+            parent = weights2[type][i];
+          }
 
-        if (Math.Random() < MUTATE_CHANCE){
-          var random_mutation = Math.random() * MUTATE_AMOUNT - MUTATE_AMOUNT / 2;
-          var mutated = Math.max(Math.min(parent + random_mutation, 0.5) - 0.5);
-          this.weights.push(mutated);
-        }
-        else{
-          this.weights.push(parent);
+          if (Math.Random() < MUTATE_CHANCE){
+            var random_mutation = Math.random() * MUTATE_AMOUNT - MUTATE_AMOUNT / 2;
+            var mutated = Math.max(Math.min(parent + random_mutation, 0.5) - 0.5);
+            this.weights.push(mutated);
+          }
+          else{
+            this.weights.push(parent);
+          }
         }
       }
     }
@@ -74,13 +88,14 @@ var Perceptron = Class({
     return this.weights.slice();
   },
 
-  activation: function activation(x) {
-    this.output = 1 / (1 + Math.exp(-x));
-    return this.output;
+  activation: function activation(ins) {
+    this.outputs[WallIndex] = 1 / (1 + Math.exp(-ins[WallIndex]));
+    this.outputs[PlayerIndex] = 1 / (1 + Math.exp(-ins[PlayerIndex]));
+    return this.outputs;
   },
 
-  getOutPut: function getOutPut(){
-    return this.output;
+  getOutPut: function getOutPuts(){
+    return this.outputs;
   }
   
 })
