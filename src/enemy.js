@@ -25,46 +25,32 @@ var Enemy = Class(Entity, {
     this.dead = false;
     this.nrOfSensors = 32;
     //how far the robot can see with its sensors
-    this.sensorRange = 800;
+    this.sensorRange = 128;
     this.suicide = false;
   },
 
   createVisionLine: function createVisionLine() {
   	//this is for debugging, creates the the graphics object that shows how far an enemy can see
 
-  	var visionGraphic = new PIXI.Graphics();
-  	visionGraphic.lineStyle(1, 0xf3a33f);
+  	this.visionGraphic = new PIXI.Graphics();
+  	this.visionGraphic.lineStyle(2, 0xFF99FF);
   	this.pointList = [];
   	var point = [];
   	var angle;
 
   	for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
-  		this.pointList.push(new PIXI.Point(this.getX(), this.getY()));
+  		this.pointList.push(new PIXI.Point(this.getX() + 90 + i, this.getY() + 90 + i));
 
   		if (i == 0) {
- 					visionGraphic.moveTo(this.pointList[i].x, this.pointList[i].y);
+ 					this.visionGraphic.moveTo(this.pointList[i].x, this.pointList[i].y);
  			}
  			else {
- 					visionGraphic.lineTo(this.pointList[i].x, this.pointList[i].y);
+ 					this.visionGraphic.lineTo(this.pointList[i].x, this.pointList[i].y);
  			}
   	}
 
-  	STAGE.addChild(visionGraphic);
+  	STAGE.addChild(this.visionGraphic);
 
-  },
-
-  updateVisionLine: function updateVisionLine() {
-  	var angle;
-  	var x, y;
-  	var dist;
-
-  	for (var i = 0; i < this.sensors.length; i++) {
-  		angle = 2 * Math.pi * (i / this.sensors.length);
-  		dist = this.sensors[i];
-
-  		this.pointList[i].x = this.getX() + Math.cos(angle) * dist;
-  		this.pointList[i].y = this.getY() + Math.sin(angle) * dist;
-  	}
   },
 
   makePerceptrons: function makePerceptrons(genotype) {
@@ -91,7 +77,6 @@ var Enemy = Class(Entity, {
 
   update: function update(player, towers) {
   	this.sensors = this.sense(player, towers);
-  	this.updateVisionLine();
   	this.plan();
   	this.act();
   },
@@ -131,37 +116,60 @@ var Enemy = Class(Entity, {
   	var checkY;
   	var tower;
   	var myX, myY;
-  	var m;
-  	var dist;
+  	var dist
 
   	for (var index = 0; index < NUMBER_OF_SENSORS; index++) {
+  		//assume false
+  		collisionFound = false;
 
 			angle = (Math.PI * 2) * (index / NUMBER_OF_SENSORS);
 
   		myX = this.getX();
 			myY = this.getY();
-			m = Math.tan ( Math.atan2(myY , myX) - angle);
+			
+			for (var dist = 10; dist <= this.sensorRange; dist += 10) {
 
-			dist = player.collisionLine(myX, myY, m);
-			if (dist != undefined) {
-				this.sensors.push(dist);
-			}
+				checkX = myX + Math.cos(angle) * dist;
+				checkY = myY + Math.sin(angle) * dist;
 
-			for (var t = 0; t < towers.length; t++) {
-				dist = towers[t].collisionLine(myX, myY, m);
-
-				if (dist != undefined) {
-					this.sensors.push(dist);
+				if (checkX > WORLD_WIDTH - this.getWidth() || checkX < 0 || checkY < 0 || checkY > WORLD_HEIGHT - this.getHeight()) {
+						collisionFound = true;
 				}
+
+				if (checkX >= player.getX() && checkX <= player.getX() + player.getWidth()) {
+					if (checkY >= player.getY() && checkY <= player.getY() + player.getHeight()) {
+						collisionFound = true;
+					}
+				}
+
+				for (var t = 0; t < towers.length && !collisionFound; t++) {
+
+					if (checkX >= tower.getX() && checkX <= tower.getX() + tower.getWidth()) {
+						if (checkY >= tower.getY() && checkY <= tower.getY() + tower.getHeight()) {
+							collisionFound = true;
+							break;
+						}
+					}
+				}
+				
 			}
 
-  		if (collisionFound == false) {
+  		if (collisionFound) {
+  			this.sensors.push(this.sensorRange - dist);
+  			this.pointList[index].x = this.getX() + Math.cos(angle) * dist;
+  			console.log(this.pointList[index]);
+  			this.pointList[index].y = this.getY() + Math.sin(angle) * dist;
+
+  		}
+  		else {
   			this.sensors.push(0);
+  			this.pointList[index].x = this.getX() + Math.cos(angle) * this.sensorRange;
+  			this.pointList[index].y = this.getY() + Math.sin(angle) * this.sensorRange;
   		}
   	}
 
   	//bias
-  	this.sensors.push(1);
+  	this.sensors.push();
   	return this.sensors;
   },
 
