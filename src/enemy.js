@@ -29,7 +29,7 @@ var Enemy = Class(Entity, {
     
     this.perceptrons = this.makePerceptrons(genotype);
     this.sensors = [];
-    this.createVisionLine();
+    if (DEBUG) this.createVisionLine();
     this.dead = false;
     this.nrOfSensors = 32;
     //how far the robot can see with its sensors
@@ -140,6 +140,7 @@ var Enemy = Class(Entity, {
   	var myX, myY;
   	var dist;
   	var halfWidth, halfHeight;
+  	var tower;
 
   	for (var index = 0; index < NUMBER_OF_SENSORS; index++) {
   		//assume false
@@ -150,7 +151,7 @@ var Enemy = Class(Entity, {
   		myX = this.getX();
 			myY = this.getY();
 			
-			for (var dist = 10; dist <= this.sensorRange && collisionFound == false; dist += 10) {
+			for (var dist = 10 ; dist <= this.sensorRange && collisionFound == false; dist += 10) {
 
 				checkX = myX + Math.cos(angle) * dist;
 				checkY = myY + Math.sin(angle) * dist;
@@ -168,31 +169,30 @@ var Enemy = Class(Entity, {
 				}
 
 				for (var t = 0; t < towers.length && !collisionFound; t++) {
-
+					tower = towers[t];
 					if (checkX >= tower.getX() && checkX <= tower.getX() + tower.getWidth()) {
 						if (checkY >= tower.getY() && checkY <= tower.getY() + tower.getHeight()) {
 							collisionFound = true;
-							break;
 						}
 					}
 				}
 
 				if (collisionFound) {
   				this.sensors.push(this.sensorRange - dist);
-  				this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
+  				if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
   			}
 
 			}
 
 			if (collisionFound == false) {
   			this.sensors.push(0);
-  			this.pointList[index].set(this.getX() + Math.cos(angle) * this.sensorRange, this.getY() + Math.sin(angle) * this.sensorRange);
+  			if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * this.sensorRange, this.getY() + Math.sin(angle) * this.sensorRange);
   		}
 
   		
   	}
 
-  	this.animateVisionLine();
+  	if (DEBUG) this.animateVisionLine();
 
   	//bias
   	this.sensors.push(1);

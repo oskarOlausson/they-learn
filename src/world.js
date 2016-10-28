@@ -1,9 +1,9 @@
 "use strict";
 
 var CHANCE_OF_SKIPPING = 0;
-    var NR_OF_PARENTS = 1;
-    var NR_OF_ENEMIES = 1;
-    var NR_OF_CHILDS = 1;
+    var NR_OF_PARENTS = 6;
+    var NR_OF_ENEMIES = 36;
+    var NR_OF_CHILDS = 6;
 
 var World = Class({
   constructor: function constructor() {
