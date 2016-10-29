@@ -10,7 +10,9 @@ var World = Class({
   	this.enemies = [];
     this.genomes = [];
     this.towers  = [];
-    this.pressed = false;
+    this.corpses = [];
+    this.screenShake = 0;
+    this.screenShakeMax = 20;
   },
 
   firstGeneration: function firstGeneration() {
@@ -32,6 +34,12 @@ var World = Class({
       //kill them and give them the worst fitness
       enemy.die(true);
     }
+  },
+
+  updateScreenShake: function updateScreenShake() {
+    OBJECTS.x = Math.random() * this.screenShake - this.screenShake;
+    OBJECTS.x = Math.random() * this.screenShake - this.screenShake;
+    this.screenShake = Math.max(0, this.screenShake - 1);
   },
   
   newGeneration: function newGeneration() {
@@ -67,9 +75,10 @@ var World = Class({
   	this.player.update();
     var player = this.player;
     var e;
+    var corpse;
 
     for (var i = 0; i < this.towers.length; i++){
-      this.towers[i].update(this.enemies);
+      this.towers[i].update();
     }
 
   	for (var i = 0; i < this.enemies.length; i++){
@@ -91,10 +100,18 @@ var World = Class({
       if (this.enemies[i].getIfDead()) {
         //save genome and remove this element from list
         this.genomes.push(this.enemies[i].remove());
+        corpse = new Corpse(this.enemies[i].getX(), this.enemies[i].getY());
+
+        this.corpses.push(corpse);
+
+        this.screenShake = this.screenShakeMax;
+
         this.enemies.splice(i, 1);
         i --;
       }
   	}
+
+    this.updateScreenShake();
 
     if (this.enemies.length == 0) {
       this.newGeneration();

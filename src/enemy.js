@@ -36,7 +36,7 @@ var Enemy = Class(Entity, {
 
     this.addY(this.getHeight() / 2);
 
-    STAGE.addChild(this.container);
+    OBJECTS.addChild(this.container);
     
     this.perceptrons = this.makePerceptrons(genotype);
     this.sensors = [];
@@ -68,7 +68,7 @@ var Enemy = Class(Entity, {
  			}
   	}
 
-  	STAGE.addChild(this.visionGraphic);
+  	OBJECTS.addChild(this.visionGraphic);
 
   },
 
@@ -151,8 +151,8 @@ var Enemy = Class(Entity, {
   	}
   	genotype.setPerceptrons(this.perceptrons);
 
-  	STAGE.removeChild(this.container);
-  	STAGE.removeChild(this.visionGraphic);
+  	OBJECTS.removeChild(this.container);
+  	OBJECTS.removeChild(this.visionGraphic);
   	return genotype;
   },
 

@@ -11,6 +11,7 @@ document.body.appendChild(renderer.view);
 
 // create the root of the scene graph
 var STAGE = new PIXI.Container();
+var OBJECTS = new PIXI.Container();
 
 
 var loader = PIXI.loader
@@ -18,6 +19,7 @@ var loader = PIXI.loader
 .add('background','assets/images/background.png')
 .add('enemy','assets/images/enemy.png')
 .add('wing','assets/images/wing.png')
+.add('corpse','assets/images/corpse.png')
 .once('complete',function(loader, resources) {
 	init();
 }).load();
@@ -30,6 +32,7 @@ function init() {
 	background.width = renderer.width;
 	background.height = renderer.height;
 	STAGE.addChild(background);
+	STAGE.addChild(OBJECTS);
 
 	world = new World();
 	world.firstGeneration();
