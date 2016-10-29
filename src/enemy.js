@@ -11,23 +11,30 @@ var Enemy = Class(Entity, {
     this.sprite.anchor.x = 0.5;
     this.sprite.anchor.y = 0.5;
 
-    var leftWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
-    var rightWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
+    this.leftWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
+    this.rightWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
 
-    leftWing.scale.x = -1;
-    leftWing.x += -this.getWidth() + 15;
-    rightWing.x += this.getWidth() / 2 - 15;
+    this.leftWing.scale.x = -1;
 
-    leftWing.anchor.set(1, 0.5);
-    rightWing.anchor.set(0, 0.5)
+    var aBit = 4;
+    this.leftWing.x += -this.getWidth() + this.leftWing.width + aBit;
+    this.rightWing.x += this.getWidth() / 2 - aBit;
 
-    this.addY(this.getHeight() / 2);
+    this.leftWing.y += 10;
+    this.rightWing.y += 10;
 
-    this.container.addChild(leftWing);
-    this.container.addChild(rightWing);
+    this.leftWing.anchor.x = 4 / 60;
+    this.leftWing.anchor.y = 66 / 86;
+    this.rightWing.anchor.x = 4 / 60;
+    this.rightWing.anchor.y = 66 / 86;
+
+    this.container.addChild(this.leftWing);
+    this.container.addChild(this.rightWing);
 
     this.animateTimer = 0;
     this.animateTimerMax = 360;
+
+    this.addY(this.getHeight() / 2);
 
     STAGE.addChild(this.container);
     
@@ -112,7 +119,7 @@ var Enemy = Class(Entity, {
 
   animate: function animate() {
 
-  	this.animateTimer += 7;
+  	this.animateTimer += 6;
 
   	if (this.animateTimer > this.animateTimerMax) {
   		this.animateTimer -= this.animateTimerMax;
@@ -120,8 +127,10 @@ var Enemy = Class(Entity, {
 
   	var cosy = Math.cos(this.animateTimer * (Math.PI / 180));
   	var squish = 1 + 0.15 * cosy;
-  	var wingRotate = 40 * cosy * 20;
+  	var wingRotate = (Math.PI / 6) * cosy;
 
+  	this.leftWing.rotation = wingRotate;
+  	this.rightWing.rotation = -wingRotate;
   	
 
   	this.container.scale.x = squish;
