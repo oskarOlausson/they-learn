@@ -15,21 +15,25 @@ var Enemy = Class(Entity, {
     var rightWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
 
     leftWing.scale.x = -1;
-    leftWing.x -= this.getWidth() / 2;
-    rightWing.x += this.getWidth() / 2;
-    leftWing.y -= this.getHeight() / 2;
-    rightWing.y -= this.getHeight() / 2;
+    leftWing.x += -this.getWidth() + 15;
+    rightWing.x += this.getWidth() / 2 - 15;
+
+    leftWing.anchor.set(1, 0.5);
+    rightWing.anchor.set(0, 0.5)
 
     this.addY(this.getHeight() / 2);
 
     this.container.addChild(leftWing);
     this.container.addChild(rightWing);
 
+    this.animateTimer = 0;
+    this.animateTimerMax = 360;
+
     STAGE.addChild(this.container);
     
     this.perceptrons = this.makePerceptrons(genotype);
     this.sensors = [];
-    if (DEBUG) this.createVisionLine();
+    this.createVisionLine();
     this.dead = false;
     this.nrOfSensors = NUMBER_OF_SENSORS;
     //how far the robot can see with its sensors
@@ -64,14 +68,17 @@ var Enemy = Class(Entity, {
   animateVisionLine: function animateVisionLine() {
 
   	this.visionGraphic.clear();
-  	this.visionGraphic.lineStyle(2, 0xFF99FF);
 
-  	this.visionGraphic.moveTo(this.pointList[0].x, this.pointList[0].y);
-  	for (var i = 1; i < this.pointList.length; i++) {
- 			this.visionGraphic.lineTo(this.pointList[i].x, this.pointList[i].y);
+  	if (DEBUG) {
+	  	this.visionGraphic.lineStyle(2, 0xFF99FF);
+
+	  	this.visionGraphic.moveTo(this.pointList[0].x, this.pointList[0].y);
+	  	for (var i = 1; i < this.pointList.length; i++) {
+	 			this.visionGraphic.lineTo(this.pointList[i].x, this.pointList[i].y);
+	  	}
+
+	  	this.visionGraphic.lineTo(this.pointList[0].x, this.pointList[0].y);
   	}
-
-  	this.visionGraphic.lineTo(this.pointList[0].x, this.pointList[0].y);
   },
 
   makePerceptrons: function makePerceptrons(genotype) {
@@ -100,6 +107,25 @@ var Enemy = Class(Entity, {
   	this.sensors = this.sense(player, towers);
   	this.plan();
   	this.act();
+  	this.animate();
+  },
+
+  animate: function animate() {
+
+  	this.animateTimer += 7;
+
+  	if (this.animateTimer > this.animateTimerMax) {
+  		this.animateTimer -= this.animateTimerMax;
+  	}
+
+  	var cosy = Math.cos(this.animateTimer * (Math.PI / 180));
+  	var squish = 1 + 0.15 * cosy;
+  	var wingRotate = 40 * cosy * 20;
+
+  	
+
+  	this.container.scale.x = squish;
+  	this.container.scale.y = 1 / this.container.scale.x;
   },
 
   getIfDead: function getIfDead() {
@@ -188,18 +214,18 @@ var Enemy = Class(Entity, {
 
 				if (collisionFound) {
 					this.sensors[PlayerIndex].push(this.sensorRange - dist);
-  				if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
+  				this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
 				}
 			}
 
 			if (collisionFound == false) {
 						this.sensors[PlayerIndex].push(this.sensorRange);
-  					if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * this.sensorRange);
+  					this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * this.sensorRange);
 			}
 
 		}
 
-  	if (DEBUG) this.animateVisionLine();
+  	this.animateVisionLine();
 
   	//bias
   	this.sensors[WallIndex].push(1);
