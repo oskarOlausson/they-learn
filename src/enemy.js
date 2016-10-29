@@ -31,7 +31,7 @@ var Enemy = Class(Entity, {
     this.sensors = [];
     if (DEBUG) this.createVisionLine();
     this.dead = false;
-    this.nrOfSensors = 32;
+    this.nrOfSensors = NUMBER_OF_SENSORS;
     //how far the robot can see with its sensors
     this.sensorRange = 400;
     this.suicide = false;
@@ -134,6 +134,8 @@ var Enemy = Class(Entity, {
   	var angle;
   	var collisionFound;
   	this.sensors = [];
+  	this.sensors[WallIndex] = [];
+  	this.sensors[PlayerIndex] = [];
   	var checkX;
   	var checkY;
   	var tower;
@@ -144,7 +146,7 @@ var Enemy = Class(Entity, {
 
   	for (var index = 0; index < NUMBER_OF_SENSORS; index++) {
   		//assume false
-  		collisionFound = [false, false];
+  		collisionFound = false;
 
 			angle = (Math.PI * 2) * (index / NUMBER_OF_SENSORS);
 
@@ -152,53 +154,50 @@ var Enemy = Class(Entity, {
 			myY = this.getY();
 			
 			for (var dist = 10 ; dist <= this.sensorRange && collisionFound == false; dist += 10) {
-
 				checkX = myX + Math.cos(angle) * dist;
 				checkY = myY + Math.sin(angle) * dist;
 				halfWidth = this.getWidth() / 2;
 				halfHeight = this.getHeight() / 2;
 
 				if (checkX > WORLD_WIDTH - halfWidth || checkX < halfWidth || checkY < halfHeight || checkY > WORLD_HEIGHT - halfHeight) {
-						collisionFound[WallIndex] = true;
+						collisionFound = true;
+						this.sensors[WallIndex].push(this.sensorRange - dist);
 				}
-
-				if (checkX >= player.getX() && checkX <= player.getX() + player.getWidth()) {
-					if (checkY >= player.getY() && checkY <= player.getY() + player.getHeight()) {
-						collisionFound[PlayerIndex] = true;
-					}
-				}
-
-				for (var t = 0; t < towers.length && !collisionFound; t++) {
-					tower = towers[t];
-					if (checkX >= tower.getX() && checkX <= tower.getX() + tower.getWidth()) {
-						if (checkY >= tower.getY() && checkY <= tower.getY() + tower.getHeight()) {
-							collisionFound[PlayerIndex] = true;
-						}
-					}
-				}
-
-				if (collisionFound[WallIndex]) {
-  				this.sensors[WallIndex].push(this.sensorRange - dist);
-  				if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
-  			}
-
-  			if (collisionFound[PlayerIndex]) {
-  				this.sensors[PlayerIndex].push(this.sensorRange - dist);
-  				if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
-  			}
-
 			}
 
-			if (collisionFound[WallIndex] == false) {
-  			this.sensors[WallIndex].push(0);
-  			if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * this.sensorRange, this.getY() + Math.sin(angle) * this.sensorRange);
-  		}
+			if (collisionFound == false) {
+						this.sensors[WallIndex].push(this.sensorRange);
+			}else collisionFound = false;
 
-  		if (collisionFound[PlayerIndex] == false) {
-  			this.sensors[PlayerIndex].push(0);
-  			if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * this.sensorRange, this.getY() + Math.sin(angle) * this.sensorRange);
-  		}
-  	}
+			for (var dist = 10 ; dist <= this.sensorRange && collisionFound == false; dist += 10) {
+				checkX = myX + Math.cos(angle) * dist;
+				checkY = myY + Math.sin(angle) * dist;
+
+				//check if player collides with point
+				if (checkX >= player.getX() && checkX <= player.getX() + player.getWidth() && checkY >= player.getY() && checkY <= player.getY() + player.getHeight()) {
+					collisionFound = true;
+				}
+
+				//checks if any tower collides with point
+				for (var t = 0; t < towers.length && !collisionFound; t++) {
+					tower = towers[t];
+					if (checkX >= tower.getX() && checkX <= tower.getX() + tower.getWidth() && checkY >= tower.getY() && checkY <= tower.getY() + tower.getHeight()) {
+						collisionFound = true;
+					}
+				}
+
+				if (collisionFound) {
+					this.sensors[PlayerIndex].push(this.sensorRange - dist);
+  				if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
+				}
+			}
+
+			if (collisionFound == false) {
+						this.sensors[PlayerIndex].push(this.sensorRange);
+  					if (DEBUG) this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * this.sensorRange);
+			}
+
+		}
 
   	if (DEBUG) this.animateVisionLine();
 
@@ -210,18 +209,21 @@ var Enemy = Class(Entity, {
 
   plan: function plan() {
   	var weight;
+  	var weight2;
   	var input;
   	var sum;
 
   	for (var p = 0; p < this.perceptrons.length; p++){
   		sum = 0;
   		for (var s = 0; s < this.sensors.length; s++) {
-  			weight = this.perceptrons[p].getWeight(s);
-  			sum += weight * this.sensors[WallIndex][s];
+  			weight = this.perceptrons[p].getWeight(WallIndex, s);
+  			weight2 = this.perceptrons[p].getWeight(PlayerIndex, s);
+  			sum += weight * this.sensors[WallIndex][s] + weight2 * this.sensors[PlayerIndex][s];
   		}
 
   		//bias
-  		sum += this.perceptrons[p].getWeight(this.perceptrons.length - 1);
+  		sum += this.perceptrons[p].getWeight(WallIndex,this.perceptrons.length - 1) * 1;
+  		sum += this.perceptrons[p].getWeight(PlayerIndex,this.perceptrons.length - 1) * 1;
 
   		this.perceptrons[p].activation(sum);
   	}
@@ -237,21 +239,14 @@ var Enemy = Class(Entity, {
 
   	/*
   	variable speed
-  	dx = 6 * (leftRight - 0.5);
   	dy = 6 * (upDown - 0.5);
   	*/
 
+ 		dx = 6 * (leftRight - 0.5);
 
-  	
-  	if (leftRight > 0.55){
-  		dx = 3;
-  	} else if (leftRight < 0.45){
-  		dx = -3;
-  	}
-
-  	if (this.perceptrons[UP_DOWN].getOutPut() > 0.55){
+  	if (this.perceptrons[UP_DOWN].getOutPut() > 0.65){
   		dy = 3;
-  	} else if (this.perceptrons[UP_DOWN].getOutPut() < 0.45){
+  	} else if (this.perceptrons[UP_DOWN].getOutPut() < 0.35){
   		dy = -3;
   	}
   	

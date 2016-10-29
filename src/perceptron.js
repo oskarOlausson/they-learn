@@ -1,5 +1,5 @@
 
-var NUMBER_OF_SENSORS = 16;
+var NUMBER_OF_SENSORS = 8;
 var NUMBER_OF_TYPES = 2;
 var MUTATE_CHANCE = 0.5;
 var MUTATE_AMOUNT = 0.3;
@@ -10,7 +10,7 @@ var Perceptron = Class({
 
   constructor: function constructor(weights, weights2) {
 
-    this.outputs = [0, 0];
+    this.output = 0;
     this.weights = [];
 
     
@@ -76,8 +76,8 @@ var Perceptron = Class({
     }
   },
 
-  getWeight: function getWeight(index) {
-    return this.weights[index];
+  getWeight: function getWeight(type,index) {
+    return this.weights[type][index];
   },
 
   getWeights: function getWeights() {
@@ -89,13 +89,13 @@ var Perceptron = Class({
   },
 
   activation: function activation(ins) {
-    this.outputs[WallIndex] = 1 / (1 + Math.exp(-ins[WallIndex]));
-    this.outputs[PlayerIndex] = 1 / (1 + Math.exp(-ins[PlayerIndex]));
-    return this.outputs;
+    this.output = 1 / (1 + Math.exp(-ins));
+    
+    return this.output;
   },
 
   getOutPut: function getOutPuts(){
-    return this.outputs;
+    return this.output;
   }
   
 })

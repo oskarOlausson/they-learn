@@ -1,9 +1,9 @@
 "use strict";
 
 var CHANCE_OF_SKIPPING = 0;
-    var NR_OF_PARENTS = 6;
-    var NR_OF_ENEMIES = 36;
-    var NR_OF_CHILDS = 6;
+    var NR_OF_PARENTS = 9;
+    var NR_OF_ENEMIES = 45;
+    var NR_OF_CHILDS = 5;
 
 var World = Class({
   constructor: function constructor() {
@@ -23,6 +23,15 @@ var World = Class({
       
   	  this.enemies.push(new Enemy(Math.random() * (WORLD_WIDTH), 0));
   	}
+  },
+
+  destroyAllEnemies: function destroyAllEnemies() {
+    var enemy;
+    for (var e = 0; e < this.enemies.length; e++) {
+      enemy = this.enemies[e];
+      //kill them and give them the worst fitness
+      enemy.die(true);
+    }
   },
   
   newGeneration: function newGeneration() {

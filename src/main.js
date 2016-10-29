@@ -1,7 +1,7 @@
 
 var WORLD_WIDTH = 800;
 var WORLD_HEIGHT = 600;
-var DEBUG = false;
+var DEBUG = true;
 var renderer = PIXI.autoDetectRenderer(WORLD_WIDTH, WORLD_HEIGHT);
 
 //argument should maybe be renderer
@@ -36,12 +36,12 @@ function init() {
 
 	keyboard.onDown('space', function(){
 		world.towers.push(new Tower(world.player.getX(), world.player.getY()));
-		console.log("hi");
 	});
 
-	keyboard.onDown('r', function(){
-		world.towers.push(new Tower(world.player.getX(), world.player.getY()));
-		console.log("hi");
+	keyboard.onDown('enter', function(){
+		
+		world.destroyAllEnemies();
+		
 	});
 
 	gameLoop();
