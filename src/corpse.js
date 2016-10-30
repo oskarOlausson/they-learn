@@ -11,13 +11,23 @@ var Corpse = Class({
 		OBJECTS.addChildAt(this.sprite, 0);
 
 		this.dead = false;
-		this.timer = 120;
+		this.timerMax = 60 * 5;
+		this.timer = this.timerMax;
 	},
 
 	update: function update() {
+		this.sprite.alpha = 0.5 * this.timer / this.timerMax;
 		this.timer -= 1;
 		if (this.timer <= 0) {
 			this.dead = true;
 		}
+	},
+
+	remove: function remove() {
+		OBJECTS.removeChild(this.sprite);
+	},
+
+	getIfDead: function getIfDead() {
+		return this.dead;
 	}
 })
