@@ -37,8 +37,8 @@ var World = Class({
   },
 
   updateScreenShake: function updateScreenShake() {
-    OBJECTS.x = Math.random() * this.screenShake - this.screenShake / 2;
-    OBJECTS.x = Math.random() * this.screenShake - this.screenShake / 2;
+    STAGE.x = Math.random() * this.screenShake - this.screenShake / 2;
+    STAGE.x = Math.random() * this.screenShake - this.screenShake / 2;
     this.screenShake = Math.max(0, this.screenShake - 1);
   },
   
