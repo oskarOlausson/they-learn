@@ -9,6 +9,7 @@ var Player = Class(Entity, {
     this.fric = 0.5;
     this.dx = 0;
     this.dy = 0;
+    this.flip = 1;
   },
   
 
@@ -45,12 +46,15 @@ var Player = Class(Entity, {
     	else this.dy = Math.min(0, this.dy + this.fric);
     }
 
+    if (this.dx > 0) this.flip = 1;
+    if (this.dx < 0) this.flip = -1;   
+
     this.addX(this.dx);
     this.addY(this.dy);
 
     var stretch = 1 + Math.abs(this.dx) / this.speedMax - Math.abs(this.dy) / this.speedMax;
-    this.sprite.scale.x = 1 + (0.2 * stretch);
-    this.sprite.scale.y = 1 / this.sprite.scale.x;
+    this.sprite.scale.x = this.flip * (1 + (0.2 * stretch));
+    this.sprite.scale.y = 1 / Math.abs(this.sprite.scale.x);
   },
 
 });

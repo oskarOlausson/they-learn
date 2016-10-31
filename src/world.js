@@ -1,9 +1,9 @@
 "use strict";
 
 var CHANCE_OF_SKIPPING = 0;
-    var NR_OF_PARENTS = 5;
+    var NR_OF_PARENTS = 8;
     var NR_OF_ENEMIES = 40;
-    var NR_OF_CHILDS = 8;
+    var NR_OF_CHILDS = 5;
 
 var World = Class({
   constructor: function constructor() {
@@ -38,7 +38,7 @@ var World = Class({
 
   updateScreenShake: function updateScreenShake() {
     STAGE.x = Math.random() * this.screenShake - this.screenShake / 2;
-    STAGE.x = Math.random() * this.screenShake - this.screenShake / 2;
+    STAGE.y = Math.random() * this.screenShake - this.screenShake / 2;
     this.screenShake = Math.max(0, this.screenShake - 1);
   },
   
@@ -105,21 +105,23 @@ var World = Class({
       for (var t = 0; t < this.towers.length; t++) {
         if (COLLISION.hit(this.towers[t].getSprite(), e.getSprite(), false, false, true)) {
           e.die();
+          this.towers[t].didKill();
         }
       }
 
       if (this.enemies[i].getIfDead()) {
 
-        if (this.enemies[i].suicide == false) {
+        if (this.enemies[i].suicide == false && this.enemies[i].madeIt == false) {
           this.screenShake = this.screenShakeMax;
         }
 
         //save genome and remove this element from list
         this.genomes.push(this.enemies[i].remove());
-        corpse = new Corpse(this.enemies[i].getX(), this.enemies[i].getY());
 
-        this.corpses.push(corpse);
-
+        if (this.enemies[i].madeIt == false){
+          corpse = new Corpse(this.enemies[i].getX(), this.enemies[i].getY());
+          this.corpses.push(corpse);
+        }
 
         this.enemies.splice(i, 1);
         i --;

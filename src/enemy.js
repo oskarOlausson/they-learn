@@ -8,11 +8,13 @@ var Enemy = Class(Entity, {
 
     Enemy.$super.call(this, 'enemy', x, y);
 
-    this.sprite.anchor.x = 0.5;
-    this.sprite.anchor.y = 0.5;
+    this.size = 1;
+
+    this.sprite.anchor.set(0.5, 0.5);
 
     this.leftWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
     this.rightWing = new PIXI.Sprite(PIXI.loader.resources['wing'].texture);
+
 
     this.leftWing.scale.x = -1;
 
@@ -44,8 +46,9 @@ var Enemy = Class(Entity, {
     this.dead = false;
     this.nrOfSensors = NUMBER_OF_SENSORS;
     //how far the robot can see with its sensors
-    this.sensorRange = 400;
+    this.sensorRange = 800;
     this.suicide = false;
+    this.madeIt = false;
   },
 
   createVisionLine: function createVisionLine() {
@@ -119,7 +122,7 @@ var Enemy = Class(Entity, {
 
   animate: function animate() {
 
-  	this.animateTimer += 6;
+  	this.animateTimer += 10;
 
   	if (this.animateTimer > this.animateTimerMax) {
   		this.animateTimer -= this.animateTimerMax;
@@ -133,8 +136,8 @@ var Enemy = Class(Entity, {
   	this.rightWing.rotation = -wingRotate;
   	
 
-  	this.container.scale.x = squish;
-  	this.container.scale.y = 1 / this.container.scale.x;
+  	this.container.scale.x = this.size * squish;
+  	this.container.scale.y = this.size / squish;
   },
 
   getIfDead: function getIfDead() {
@@ -156,9 +159,10 @@ var Enemy = Class(Entity, {
   	return genotype;
   },
 
-  die: function die(suicide) {
+  die: function die(suicide, madeIt) {
   	this.suicide = suicide || false;
   	this.dead = true;
+  	this.madeIt = madeIt || false;
   },
 
   sense: function sense(player, towers) {
@@ -265,43 +269,37 @@ var Enemy = Class(Entity, {
   },
 
   act: function act() {
-  	//console.log(this.perceptrons[LEFT_RIGHT].getOutPut());
   	var dx = 0;
   	var dy = 0;
 
   	var leftRight = this.perceptrons[LEFT_RIGHT].getOutPut();
-  	var upDown = this.perceptrons[LEFT_RIGHT].getOutPut();
+  	var upDown = this.perceptrons[UP_DOWN].getOutPut();
 
-  	/*
-  	variable speed
+  	
+  	//variable speed
+  	dx = 6 * (leftRight - 0.5);
   	dy = 6 * (upDown - 0.5);
-  	*/
-
- 		dx = 6 * (leftRight - 0.5);
-
-  	if (this.perceptrons[UP_DOWN].getOutPut() > 0.65){
-  		dy = 3;
-  	} else if (this.perceptrons[UP_DOWN].getOutPut() < 0.35){
-  		dy = -3;
-  	}
   	
 
   	this.addX(dx);
+		this.addY(dy);
+
+
   	if (this.getX() < this.getWidth() / 2){
-  		this.die(true);
+  		this.die(false);
   		//this.setX(0);
   	}
   	else if (this.getX() > WORLD_WIDTH - this.getWidth() / 2){
-  		this.die(true);
+  		this.die(false);
   		//this.setX(800 - this.getWidth());
   	}
-  	this.addY(dy);
+  	
 
   	if (this.getY() < this.getHeight() / 2){
   		this.setY(this.getHeight() / 2);
   	}
   	else if (this.getY() > WORLD_HEIGHT) {
-  		this.die();
+  		this.die(false, true);
   	}
   },
 });
