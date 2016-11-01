@@ -213,14 +213,19 @@ var Enemy = Class(Entity, {
 				checkY = myY + Math.sin(angle) * dist;
 
 				//check if player collides with point
-				if (checkX >= player.getX() && checkX <= player.getX() + player.getWidth() && checkY >= player.getY() && checkY <= player.getY() + player.getHeight()) {
+				if (Math.abs(checkX - player.getX()) < player.getWidth() / 2 && Math.abs(checkY - player.getY()) < player.getHeight() / 2) {
 					collisionFound = true;
 				}
 
 				//checks if any tower collides with point
+				if (towers.length > 0){
+					var halfWidth = towers[0].getWidth() / 2;
+					var halfHeight = towers[0].getHeight() / 2;
+				}
+
 				for (var t = 0; t < towers.length && !collisionFound; t++) {
 					tower = towers[t];
-					if (checkX >= tower.getX() && checkX <= tower.getX() + tower.getWidth() && checkY >= tower.getY() && checkY <= tower.getY() + tower.getHeight()) {
+					if (Math.abs(checkX - tower.getX()) < halfWidth && Math.abs(checkY - tower.getY()) < halfHeight) {
 						collisionFound = true;
 					}
 				}
@@ -257,12 +262,13 @@ var Enemy = Class(Entity, {
   		for (var s = 0; s < this.sensors.length; s++) {
   			weight = this.perceptrons[p].getWeight(WallIndex, s);
   			weight2 = this.perceptrons[p].getWeight(PlayerIndex, s);
-  			sum += weight * this.sensors[WallIndex][s] + weight2 * this.sensors[PlayerIndex][s];
+  			sum += weight  * this.sensors[WallIndex][s];
+  			sum += weight2 * this.sensors[PlayerIndex][s];
   		}
 
   		//bias
-  		sum += this.perceptrons[p].getWeight(WallIndex,this.perceptrons.length - 1) * 1;
-  		sum += this.perceptrons[p].getWeight(PlayerIndex,this.perceptrons.length - 1) * 1;
+  		sum += this.perceptrons[p].getWeight(WallIndex, this.perceptrons.length - 1) * 1;
+  		sum += this.perceptrons[p].getWeight(PlayerIndex, this.perceptrons.length - 1) * 1;
 
   		this.perceptrons[p].activation(sum);
   	}

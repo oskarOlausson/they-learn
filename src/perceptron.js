@@ -1,5 +1,5 @@
 
-var NUMBER_OF_SENSORS = 8;
+var NUMBER_OF_SENSORS = 16;
 var NUMBER_OF_TYPES = 2;
 var MUTATE_CHANCE = 0.45;
 var MUTATE_AMOUNT = 1;
@@ -78,7 +78,7 @@ var Perceptron = Class({
     }
   },
 
-  getWeight: function getWeight(type,index) {
+  getWeight: function getWeight(type, index) {
     return this.weights[type][index];
   },
 

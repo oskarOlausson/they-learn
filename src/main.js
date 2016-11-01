@@ -1,7 +1,7 @@
 
 var WORLD_WIDTH = 800;
 var WORLD_HEIGHT = 900;
-var DEBUG = false;
+var DEBUG = true;
 var renderer = PIXI.autoDetectRenderer(WORLD_WIDTH, WORLD_HEIGHT);
 
 //argument should maybe be renderer
