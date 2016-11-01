@@ -52,6 +52,12 @@ var Player = Class(Entity, {
     this.addX(this.dx);
     this.addY(this.dy);
 
+    var limit = this.getHeight() * 2.5;
+    
+    if (this.getY() < limit) {
+    	this.setY(limit);
+    }
+
     var stretch = 1 + Math.abs(this.dx) / this.speedMax - Math.abs(this.dy) / this.speedMax;
     this.sprite.scale.x = this.flip * (1 + (0.2 * stretch));
     this.sprite.scale.y = 1 / Math.abs(this.sprite.scale.x);

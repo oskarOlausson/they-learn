@@ -200,7 +200,7 @@ var Enemy = Class(Entity, {
 
 				if (checkX > WORLD_WIDTH - halfWidth || checkX < halfWidth || checkY < halfHeight || checkY > WORLD_HEIGHT - halfHeight) {
 						collisionFound = true;
-						this.sensors[WallIndex].push(this.sensorRange - dist);
+						this.sensors[WallIndex].push((this.sensorRange - dist) / this.sensorRange);
 				}
 			}
 
@@ -226,13 +226,13 @@ var Enemy = Class(Entity, {
 				}
 
 				if (collisionFound) {
-					this.sensors[PlayerIndex].push(this.sensorRange - dist);
+					this.sensors[PlayerIndex].push((this.sensorRange - dist) / this.sensorRange);
   				this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * dist);
 				}
 			}
 
 			if (collisionFound == false) {
-						this.sensors[PlayerIndex].push(this.sensorRange);
+						this.sensors[PlayerIndex].push(1);
   					this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * this.sensorRange);
 			}
 
@@ -277,8 +277,8 @@ var Enemy = Class(Entity, {
 
   	
   	//variable speed
-  	dx = 6 * (leftRight - 0.5);
-  	dy = 6 * (upDown - 0.5);
+  	dx = 10 * (leftRight - 0.5);
+  	dy = 10 * (upDown - 0.5);
   	
 
   	this.addX(dx);

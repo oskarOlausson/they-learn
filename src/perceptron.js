@@ -1,8 +1,8 @@
 
-var NUMBER_OF_SENSORS = 32;
+var NUMBER_OF_SENSORS = 8;
 var NUMBER_OF_TYPES = 2;
 var MUTATE_CHANCE = 0.45;
-var MUTATE_AMOUNT = 0.3;
+var MUTATE_AMOUNT = 1;
 var WallIndex = 0;
 var PlayerIndex = 1;
 
