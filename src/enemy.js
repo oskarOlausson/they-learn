@@ -42,11 +42,14 @@ var Enemy = Class(Entity, {
     
     this.perceptrons = this.makePerceptrons(genotype);
     this.sensors = [];
+
+    //how far the robot can see with its sensors
+    this.sensorRange = 200;
+
     this.createVisionLine();
     this.dead = false;
     this.nrOfSensors = NUMBER_OF_SENSORS;
-    //how far the robot can see with its sensors
-    this.sensorRange = 800;
+    
     this.suicide = false;
     this.madeIt = false;
   },
@@ -55,29 +58,70 @@ var Enemy = Class(Entity, {
   	//this is for debugging, creates the the graphics object that shows how far an enemy can see
 
   	this.visionGraphic = new PIXI.Graphics();
+  	this.weightContainer = new PIXI.Container();
+  	var weightPositive = new PIXI.Graphics();
+  	var weightNegative = new PIXI.Graphics();
+  	var w;
+
+
   	this.visionGraphic.lineStyle(2, 0xFF99FF);
+  	weightPositive.lineStyle(2, 0xb22323); // cherry red
+  	weightNegative.lineStyle(2, 0x43a6db); // light blue
+
+
   	this.pointList = [];
-  	var point = [];
+  	var weightList = [];
   	var angle;
+  	var dist;
+
+  	length = 100;
 
   	for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
-  		this.pointList.push(new PIXI.Point(this.getX() + i, this.getY() + i));
+  		this.pointList.push(new PIXI.Point(this.getX(), this.getY()));
+  		angle = Math.PI * 2 * (i / NUMBER_OF_SENSORS);
+
+  		dist = Math.cos(angle) * this.perceptrons[LEFT_RIGHT].getWeight(PlayerIndex, i);
+  		dist += Math.sin(angle) * this.perceptrons[UP_DOWN].getWeight(WallIndex, i);
+
+  		dist *= length;
+  		
+  		if (dist > 0) w = weightPositive;
+  		else {
+  			w = weightNegative;
+				dist = -dist;
+			}
+
+  		w.moveTo(0, 0);
+  		w.lineTo(Math.cos(angle) * dist, Math.sin(angle) * dist);
 
   		if (i == 0) {
  					this.visionGraphic.moveTo(this.pointList[i].x, this.pointList[i].y);
  			}
  			else {
- 					this.visionGraphic.lineTo(this.pointList[i].x, this.pointList[i].y);
+ 					this.visionGraphic.lineTo(this.pointList[i].x, this.pointList[i].y);	
  			}
   	}
 
   	OBJECTS.addChild(this.visionGraphic);
+  	this.weightContainer.addChild(weightPositive);
+  	this.weightContainer.addChild(weightNegative);
+  	OBJECTS.addChild(this.weightContainer);
+  	this.weightContainer.renderable = DEBUG;
 
   },
 
   animateVisionLine: function animateVisionLine() {
 
   	this.visionGraphic.clear();
+
+  	if (DEBUG == true) {
+  		this.weightContainer.x = this.getX();
+  		this.weightContainer.y = this.getY();
+  		this.weightContainer.renderable = true;
+  	}
+  	else {
+  		this.weightContainer.renderable = false;
+  	}
 
   	if (DEBUG) {
 	  	this.visionGraphic.lineStyle(2, 0xFF99FF);
@@ -156,6 +200,7 @@ var Enemy = Class(Entity, {
 
   	OBJECTS.removeChild(this.container);
   	OBJECTS.removeChild(this.visionGraphic);
+  	OBJECTS.removeChild(this.weightContainer);
   	return genotype;
   },
 
@@ -205,7 +250,7 @@ var Enemy = Class(Entity, {
 			}
 
 			if (collisionFound == false) {
-						this.sensors[WallIndex].push(this.sensorRange);
+						this.sensors[WallIndex].push(0);
 			}else collisionFound = false;
 
 			for (var dist = 10 ; dist <= this.sensorRange && collisionFound == false; dist += 10) {
@@ -237,7 +282,7 @@ var Enemy = Class(Entity, {
 			}
 
 			if (collisionFound == false) {
-						this.sensors[PlayerIndex].push(1);
+						this.sensors[PlayerIndex].push(0);
   					this.pointList[index].set(this.getX() + Math.cos(angle) * dist, this.getY() + Math.sin(angle) * this.sensorRange);
 			}
 

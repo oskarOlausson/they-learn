@@ -1,7 +1,7 @@
 
 var NUMBER_OF_SENSORS = 16;
 var NUMBER_OF_TYPES = 2;
-var MUTATE_CHANCE = 0.45;
+var MUTATE_CHANCE = 0.35;
 var MUTATE_AMOUNT = 1;
 var WallIndex = 0;
 var PlayerIndex = 1;
@@ -22,7 +22,7 @@ var Perceptron = Class({
       //Zero parents
       for (var i = 0; i < NUMBER_OF_SENSORS; i++) {
         this.weights[WallIndex].push(Math.random() - 0.5);
-        this.weights[PlayerIndex].push(Math.random() - 0.5)
+        this.weights[PlayerIndex].push(Math.random() - 0.5);
       }
 
       //bias
@@ -34,6 +34,7 @@ var Perceptron = Class({
       //One parent
       var random_mutation;
       var mutated;
+
       for (var i = 0; i < weights[WallIndex].length; i++) {
         for (var type = 0; type < 2; type++) {
           if (Math.random() < MUTATE_CHANCE){
@@ -41,17 +42,15 @@ var Perceptron = Class({
 
             mutated = random_mutation + weights[type][i];
 
-
-            if (mutated > 0.5) mutated = 0.5;
-            else if (mutated < -0.5) mutated = -0.5;
-
             this.weights[type].push(mutated);
+
           }
           else{
             this.weights[type].push(weights[type][i]);
           }
         }
       }
+
     }
     else{
       //Two parents
